@@ -1,0 +1,12 @@
+﻿<Application x:Class="mxd.SQL2.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:mxd.SQL2"
+             Startup="App_OnStartup">
+    <Application.Resources>
+        <!-- <Style TargetType="{x:Type Window}">
+            <Setter Property="FontFamily" Value="Microsoft Sans Serif" />
+            <Setter Property="FontSize" Value="12" />
+        </Style> -->
+    </Application.Resources>
+</Application>
