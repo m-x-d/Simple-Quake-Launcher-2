@@ -23,6 +23,7 @@ namespace mxd.SQL2.Games
 		protected string defaultmodpath; // id1 / baseq2 / data1 etc.
 		protected string gamepath; // c:\games\Quake, c:\games\Quake2 etc.
 		protected string ignoredmapprefix; // map filenames starting with this will be ignored
+		protected HashSet<string> supporteddemoextensions; // .dem, .mvd, .qvd etc.
 		protected Dictionary<string, GameItem> basegames; // Quake-specific game flags; <folder name, BaseGameItem>
 		protected List<SkillItem> skills; // Easy, Medium, Hard, Nightmare!
         protected List<ClassItem> classes; // Cleric, Paladin, Necromancer [default], Assassin, Demoness [Hexen 2 only]
@@ -46,6 +47,7 @@ namespace mxd.SQL2.Games
         public string DefaultModPath => defaultmodpath; // c:\games\Quake\ID1, c:\games\Quake2\baseq2 etc.
 		public string GamePath => gamepath;
 	    public string IgnoredMapPrefix => ignoredmapprefix;
+	    public HashSet<string> SupportedDemoExtensions => supporteddemoextensions;
 	    public ICollection<GameItem> BaseGames => basegames.Values;
 	    public List<SkillItem> Skills => skills;
 	    public List<ClassItem> Classes => classes;
@@ -78,9 +80,9 @@ namespace mxd.SQL2.Games
         public delegate DemoItem GetDemoInfoDelegate(string demoname, BinaryReader reader);
 
         // Demos gathering
-        protected delegate List<DemoItem> GetFolderDemosDelegate(string modpath);
-        protected delegate List<DemoItem>    GetPakDemosDelegate(string modpath);
-        protected delegate List<DemoItem>    GetPK3DemosDelegate(string modpath);
+        protected delegate List<DemoItem> GetFolderDemosDelegate(string modpath, string demosfolder);
+        protected delegate List<DemoItem>    GetPakDemosDelegate(string modpath, string demosfolder);
+        protected delegate List<DemoItem>    GetPK3DemosDelegate(string modpath, string demosfolder);
 
         // Map title retrieval instance
         protected GetMapInfoDelegate getmapinfo;
@@ -116,6 +118,7 @@ namespace mxd.SQL2.Games
             classes = new List<ClassItem>();
             skillnames = new List<string>();
             classnames = new List<string>();
+		    supporteddemoextensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         }
 
 	    protected abstract bool CanHandle(string gamepath);
@@ -171,14 +174,19 @@ namespace mxd.SQL2.Games
 
 		public virtual List<DemoItem> GetDemos(string modpath) // c:\Quake\MyMod
 		{
-            var demos = new List<DemoItem>();
-            var nameshash = new HashSet<string>();
-            if(!Directory.Exists(modpath)) return demos;
+			return GetDemos(modpath, string.Empty);
+		}
 
-            // Get demos from all supported sources
-            if(getfolderdemos != null) AddDemos(demos, getfolderdemos(modpath), nameshash);
-            if(getpakdemos != null)    AddDemos(demos, getpakdemos(modpath), nameshash);
-            if(getpk3demos != null)    AddDemos(demos, getpk3demos(modpath), nameshash);
+		protected virtual List<DemoItem> GetDemos(string modpath, string modfolder)
+		{
+			var demos = new List<DemoItem>();
+			if(!Directory.Exists(modpath)) return demos;
+
+			// Get demos from all supported sources
+			var nameshash = new HashSet<string>();
+			if(getfolderdemos != null) AddDemos(demos, getfolderdemos(modpath, modfolder), nameshash);
+			if(getpakdemos != null) AddDemos(demos, getpakdemos(modpath, modfolder), nameshash);
+			if(getpk3demos != null) AddDemos(demos, getpk3demos(modpath, modfolder), nameshash);
 
 			// Sort and return the List
 			demos.Sort((s1, s2) => string.Compare(s1.Value, s2.Value, StringComparison.OrdinalIgnoreCase));
@@ -189,7 +197,7 @@ namespace mxd.SQL2.Games
 	    {
 	        foreach(DemoItem di in newdemos)
 	        {
-	            string hash = di.MapFileName + di.Title;
+	            string hash = Path.GetFileName(di.MapFilePath) + di.Title;
 	            if(!nameshash.Contains(hash))
 	            {
 	                nameshash.Add(hash);
@@ -268,19 +276,15 @@ namespace mxd.SQL2.Games
 			return false;
 		}
 
-        public virtual bool EntryIsDemo(string path)
-        {
-            return Path.GetExtension(path.ToLowerInvariant()) == ".dem";
-        }
-
 	    public virtual void AddDemoItem(string relativedemopath, List<DemoItem> demos, BinaryReader reader)
 	    {
-            DemoItem di = getdemoinfo(relativedemopath, reader);
+		    relativedemopath = relativedemopath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+			DemoItem di = getdemoinfo(relativedemopath, reader);
             if(di != null)
             {
                 // Check if we have a matching map...
-                if(!mapnames.Contains(di.MapFileName))
-                    demos.Add(new DemoItem(relativedemopath, "Missing map file: '" + di.MapFileName + "'")); // Add anyway, but with a warning...
+                if(!mapnames.Contains(Path.GetFileNameWithoutExtension(di.MapFilePath)))
+                    demos.Add(new DemoItem(relativedemopath, "Missing map file: '" + di.MapFilePath + "'")); // Add anyway, but with a warning...
                 else
                     demos.Add(di);
             }

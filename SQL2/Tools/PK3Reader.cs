@@ -1,5 +1,6 @@
 ﻿#region ================= Namespaces
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -103,7 +104,7 @@ namespace mxd.SQL2.Tools
 
         #region ================= Demos
 
-	    public static List<DemoItem> GetDemos(string modpath)
+	    public static List<DemoItem> GetDemos(string modpath, string demosfolder)
 	    {
             string[] zipfiles = Directory.GetFiles(modpath, "*.pk3");
             var result = new List<DemoItem>();
@@ -112,11 +113,26 @@ namespace mxd.SQL2.Tools
             {
                 using(var arc = ZipFile.OpenRead(file))
                 {
-                    foreach(var entry in arc.Entries)
+                    foreach(var e in arc.Entries)
                     {
-                        if(!GameHandler.Current.EntryIsDemo(entry.Name)) continue;
+	                    string entry = e.FullName;
+						
+						// Skip unrelated files...
+						if(!GameHandler.Current.SupportedDemoExtensions.Contains(Path.GetExtension(entry)))
+							continue;
 
-                        using(var stream = entry.Open())
+						// If demosfolder is given, skip items not within said folder...
+						if(!string.IsNullOrEmpty(demosfolder))
+						{
+							// If demosfolder is given, skip items not within said folder...
+							if(!entry.StartsWith(demosfolder, StringComparison.OrdinalIgnoreCase))
+								continue;
+
+							// Strip "demos" from the entry name (Q2 expects path relative to "demos" folder)
+							entry = entry.Substring(demosfolder.Length + 1);
+						}
+
+						using(var stream = e.Open())
                         {
                             using(var copy = new MemoryStream())
                             {
@@ -124,7 +140,7 @@ namespace mxd.SQL2.Tools
                                 copy.Position = 0;
 
                                 using(var reader = new BinaryReader(copy))
-                                    GameHandler.Current.AddDemoItem(entry.FullName, result, reader);
+                                    GameHandler.Current.AddDemoItem(entry, result, reader);
                             }
                         }
                     }

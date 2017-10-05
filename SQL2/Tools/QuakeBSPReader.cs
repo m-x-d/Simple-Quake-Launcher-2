@@ -1,5 +1,6 @@
 ﻿#region ================= Namespaces
 
+using System;
 using System.IO;
 using mxd.SQL2.Data;
 using mxd.SQL2.Items;
@@ -27,27 +28,26 @@ namespace mxd.SQL2.Tools
 
 			// Get version and offset to entities 
 			int version = reader.ReadInt32();
-			long entoffset = reader.ReadInt32() + offset;
-			int entlen = reader.ReadInt32();
+			long entdatastart = reader.ReadInt32() + offset;
+			long entdataend = entdatastart + reader.ReadInt32();
 
             // Time to bail out?
             if((version != BSPVERSION && version != BSP2VERSION_BSP2 && version != BSP2VERSION_2PSB)
-				|| entlen == 0 || entoffset + entlen > reader.BaseStream.Length)
+				|| entdatastart >= reader.BaseStream.Length || entdataend >= reader.BaseStream.Length)
 				return new MapItem(name);
 
             // Get entities data. Worldspawn should be the first entry
-            reader.BaseStream.Position = entoffset + 1; // Skip the first "{"
+            reader.BaseStream.Position = entdatastart + 1; // Skip the first "{"
             string data = reader.ReadString(' ');
 
-			while(!data.EndsWith("\"message\"") && !data.Contains("}") && entlen > 0)
+			while(!data.EndsWith("\"message\"", StringComparison.OrdinalIgnoreCase) && !data.Contains("}") && reader.BaseStream.Position < entdataend)
 			{
-				entlen -= data.Length;
 				data = reader.ReadString(' ');
 			}
 
 			// Next quoted string is map name
 			string title = string.Empty;
-			if(data.EndsWith("\"message\""))
+			if(data.EndsWith("\"message\"", StringComparison.OrdinalIgnoreCase))
 			{
 				byte b = reader.ReadByte();
 

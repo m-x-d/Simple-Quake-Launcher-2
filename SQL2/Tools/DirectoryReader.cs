@@ -55,24 +55,30 @@ namespace mxd.SQL2.Tools
 
         #region ================= Demos
 
-        public static List<DemoItem> GetDemos(string modpath)
+        public static List<DemoItem> GetDemos(string modpath, string demosfolder)
         {
             var result = new List<DemoItem>();
+	        if(!string.IsNullOrEmpty(demosfolder))
+	        {
+		        modpath = Path.Combine(modpath, demosfolder);
+		        if(!Directory.Exists(modpath)) return result;
+			}
 
             // Get demo files. Can be in subfolders
-            string[] demofiles = Directory.GetFiles(modpath, "*.dem", SearchOption.AllDirectories);
-
-            // Try to get data from demo files...
-            foreach(string demofile in demofiles)
+            foreach(string ext in GameHandler.Current.SupportedDemoExtensions) // .dem, etc
             {
-                using(Stream stream = File.OpenRead(demofile))
+                // Try to get data from demo files...
+                foreach(string file in Directory.GetFiles(modpath, "*" + ext, SearchOption.AllDirectories))
                 {
-                    if(stream.Length > 67)
+                    using(var stream = File.OpenRead(file))
                     {
-                        using(BinaryReader br = new BinaryReader(stream, Encoding.ASCII))
+                        if(stream.Length > 67)
                         {
-                            string relativedemopath = demofile.Substring(modpath.Length + 1);
-                            GameHandler.Current.AddDemoItem(relativedemopath, result, br);
+                            using(var br = new BinaryReader(stream, Encoding.ASCII))
+                            {
+                                string relativedemopath = file.Substring(modpath.Length + 1);
+                                GameHandler.Current.AddDemoItem(relativedemopath, result, br);
+                            }
                         }
                     }
                 }

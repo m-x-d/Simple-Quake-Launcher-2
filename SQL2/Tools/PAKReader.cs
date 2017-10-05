@@ -1,5 +1,6 @@
 ﻿#region ================= Namespaces
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -98,7 +99,7 @@ namespace mxd.SQL2.Tools
 
         #region ================= Demos
 
-        public static List<DemoItem> GetDemos(string modpath)
+        public static List<DemoItem> GetDemos(string modpath, string demosfolder)
         {
             string[] pakfiles = Directory.GetFiles(modpath, "*.pak");
             var result = new List<DemoItem>();
@@ -125,10 +126,22 @@ namespace mxd.SQL2.Tools
                             int offset = reader.ReadInt32();
                             reader.BaseStream.Position += 4; //skip unrelated stuff
 
-                            if(!GameHandler.Current.EntryIsDemo(entry)) continue;
-                            
-                            // Store position
-                            long curpos = reader.BaseStream.Position;
+							// Skip unrelated files...
+                            if(!GameHandler.Current.SupportedDemoExtensions.Contains(Path.GetExtension(entry)))
+								continue;
+
+	                        if(!string.IsNullOrEmpty(demosfolder))
+	                        {
+		                        // If demosfolder is given, skip items not within said folder...
+								if(!entry.StartsWith(demosfolder, StringComparison.OrdinalIgnoreCase))
+									continue;
+
+								// Strip "demos" from the entry name (Q2 expects path relative to "demos" folder)
+		                        entry = entry.Substring(demosfolder.Length + 1);
+	                        }
+
+							// Store position
+							long curpos = reader.BaseStream.Position;
 
                             // Go to data location
                             reader.BaseStream.Position = offset;

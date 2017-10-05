@@ -37,6 +37,9 @@ namespace mxd.SQL2.Games
             // Ignore props
             ignoredmapprefix = "b_";
 
+		    // Demo extensions
+		    supporteddemoextensions.Add(".dem");
+
             // Setup map delegates
             getfoldermaps = DirectoryReader.GetMaps;
 			getpakmaps = PAKReader.GetMaps;
@@ -122,6 +125,5 @@ namespace mxd.SQL2.Games
 		}
 
 		#endregion
-
 	}
 }

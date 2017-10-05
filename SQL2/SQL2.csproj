@@ -63,6 +63,8 @@
     </ApplicationDefinition>
     <Compile Include="Controls\PreviewRun.cs" />
     <Compile Include="Controls\PreviewTextBox.cs" />
+    <Compile Include="Data\Quake2Font.cs" />
+    <Compile Include="Games\Quake2Handler.cs" />
     <Compile Include="Items\ClassItem.cs" />
     <Compile Include="Items\ItemType.cs" />
     <Compile Include="Items\SkillItem.cs" />
@@ -71,6 +73,8 @@
     <Compile Include="Tools\DisplayTools.cs" />
     <Compile Include="Tools\PAKReader.cs" />
     <Compile Include="Tools\PK3Reader.cs" />
+    <Compile Include="Tools\Quake2BSPReader.cs" />
+    <Compile Include="Tools\Quake2DemoReader.cs" />
     <Compile Include="Tools\QuakeBSPReader.cs" />
     <Compile Include="Tools\QuakeDemoReader.cs" />
     <Compile Include="Tools\StringEx.cs" />

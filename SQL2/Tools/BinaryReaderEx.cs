@@ -36,12 +36,26 @@ namespace mxd.SQL2.Tools
 		public static string ReadString(this BinaryReader br, char stopper)
 		{
 			string name = string.Empty;
-			while(br.BaseStream.Position < br.BaseStream.Length)
-			{
-				var c = br.ReadChar();
-				if(c == '\0' || c == stopper) break;
-				name += c;
-			}
+
+		    if(stopper == '\0')
+		    {
+		        while(br.BaseStream.Position < br.BaseStream.Length)
+		        {
+		            var c = br.ReadChar();
+		            if(c == '\0') break;
+		            name += c;
+		        }
+		    }
+		    else
+		    {
+		        while(br.BaseStream.Position < br.BaseStream.Length)
+		        {
+		            var c = br.ReadChar();
+		            if(c == '\0' || c == stopper) break;
+		            name += c;
+		        }
+            }
+			
 			return name;
 		}
 

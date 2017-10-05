@@ -346,7 +346,7 @@ namespace mxd.SQL2
             var gi = (GameItem)games.SelectedItem;
 
             // When Default ModItem and non-default GameItem is selected, return ModItem to GameItem location
-            if(!mi.IsDefault || !games.IsEnabled || gi.IsDefault)
+            if(!mi.IsDefault || !games.IsEnabled || gi == null || gi.IsDefault)
                 return mi;
 
             foreach(ModItem mod in allmods)
@@ -389,7 +389,7 @@ namespace mxd.SQL2
             {
                 var demo = (DemoItem)lp[ItemType.DEMO];
                 string map = RemoveInvalidFilenameChars(demo.MapTitle);
-                if(string.IsNullOrEmpty(map)) map = Path.GetFileName(demo.MapFileName);
+                if(string.IsNullOrEmpty(map)) map = Path.GetFileName(demo.MapFilePath);
                 shortcutname = "Watch '" + map.UppercaseFirst() + "' Demo";
             }
 	        else

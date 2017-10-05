@@ -16,7 +16,7 @@ namespace mxd.SQL2.Items
 
 		#region ================= Variables
 
-		private readonly string mapfilename;
+		private readonly string mapfilepath;
 		private readonly string maptitle;
         private readonly bool isinvalid;
 
@@ -26,7 +26,7 @@ namespace mxd.SQL2.Items
 
         // Value: demos\somedemo.dem
         // Title: demos\somedemo.dem | map: Benis Devastation
-        public string MapFileName => mapfilename; // maps/somemap.bsp
+        public string MapFilePath => mapfilepath; // maps/somemap.bsp
         public string MapTitle => maptitle; // Benis Devastation
         public bool IsInvalid => isinvalid;
 
@@ -42,9 +42,9 @@ namespace mxd.SQL2.Items
 			this.maptitle = name;
 		}
 
-		public DemoItem(string filename, string mapfilename, string maptitle) : base(filename + " | map: " + maptitle, filename)
+		public DemoItem(string filename, string mapfilepath, string maptitle) : base(filename + " | map: " + maptitle, filename)
 		{
-			this.mapfilename = mapfilename;
+			this.mapfilepath = mapfilepath;
 			this.maptitle = maptitle;
 		}
 

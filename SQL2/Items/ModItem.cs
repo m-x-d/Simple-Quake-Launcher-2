@@ -47,6 +47,16 @@ namespace mxd.SQL2.Items
             this.isbuiltin = isbuiltin;
 		}
 
+		// "MP2: Ground Zero", XATRIX, "c:\Quake2\XATRIX"
+		public ModItem(string modtitle, string modname, string modpath, bool isbuiltin = false) : base(modtitle, modname)
+		{
+#if DEBUG
+			if(!Directory.Exists(modpath)) throw new Exception("Invalid modpath!");
+#endif
+			this.modpath = modpath;
+			this.isbuiltin = isbuiltin;
+		}
+
 		#endregion
 	}
 }

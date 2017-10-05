@@ -88,7 +88,6 @@ namespace mxd.SQL2.Tools
                         continue;
                     }
 
-                    mapfilepath = Path.GetFileNameWithoutExtension(mapfilepath);
                     if(string.IsNullOrEmpty(mapfilepath))
                     {
                         reader.BaseStream.Position = curoffset;

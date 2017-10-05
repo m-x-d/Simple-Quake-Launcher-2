@@ -90,9 +90,9 @@
             <Button x:Name="launch" Content="Launch!" Margin="1,6,10,0" FontSize="16" Click="launch_Click" FontWeight="Bold" Grid.Column="1" Height="30" VerticalAlignment="Top" IsDefault="True"/>
             <Button x:Name="createshortcut" Click="createshortcut_OnClick" Margin="10,6,1,0" VerticalAlignment="Top" Height="30">
                 <Grid>
-                    <Image Width="22" Height="22" HorizontalAlignment="Left" x:Name="engineicon" Margin="-10,0,0,0"></Image>
-                    <Image Width="22" Height="22" HorizontalAlignment="Left" Source="Resources/Shortcut.png" Margin="-10,0,0,0"></Image>
-                    <TextBlock FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,-12,0">▼</TextBlock>
+                    <Image Width="22" Height="22" HorizontalAlignment="Left" x:Name="engineicon" Margin="-8,0,0,0"></Image>
+                    <Image Width="10" Height="10" VerticalAlignment="Bottom" HorizontalAlignment="Left" Source="Resources/Shortcut.png" Margin="-12,0,0,-2"></Image>
+                    <TextBlock FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,-10,0">▼</TextBlock>
                 </Grid>
                 <Button.ToolTip>Create shortcut using current options</Button.ToolTip>
                 <Button.ContextMenu>
