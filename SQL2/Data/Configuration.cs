@@ -20,8 +20,8 @@ namespace mxd.SQL2.Data
 		public static string Map = string.Empty;
 		public static string Demo = string.Empty;
 		public static string Skill = string.Empty;
-        public static string Class = string.Empty; // [Hexen 2]
-        public static int Game; 
+		public static string Class = string.Empty; // [Hexen 2]
+		public static int Game; 
 		public static Dictionary<ItemType, string> ExtraArguments = new Dictionary<ItemType, string>(); // LaunchParameterType, custom arg
 
 		#endregion
@@ -62,29 +62,29 @@ namespace mxd.SQL2.Data
 							WindowSize = new ResolutionItem(w, h);
 						break;
 
-                    case "extraargs":
-                        ExtraArguments = new Dictionary<ItemType, string>();
-				        string[] args = value.Split(extraargsseparator, StringSplitOptions.RemoveEmptyEntries);
-				        foreach(string arg in args)
-				        {
-				            string typestr = arg.Substring(0, 2);
-				            ItemType type = ItemTypes.Markers.ContainsKey(typestr) ? ItemTypes.Markers[typestr] : ItemType.CLASS;
-				            string trimmedarg = arg.Substring(2).Trim();
+					case "extraargs":
+						ExtraArguments = new Dictionary<ItemType, string>();
+						string[] args = value.Split(extraargsseparator, StringSplitOptions.RemoveEmptyEntries);
+						foreach(string arg in args)
+						{
+							string typestr = arg.Substring(0, 2);
+							ItemType type = ItemTypes.Markers.ContainsKey(typestr) ? ItemTypes.Markers[typestr] : ItemType.CLASS;
+							string trimmedarg = arg.Substring(2).Trim();
 
-                            if(ExtraArguments.ContainsKey(type))
-                                ExtraArguments[type] += " " + trimmedarg;
-                            else
-                                ExtraArguments[type] = trimmedarg;
-                        }
-                        break;
+							if(ExtraArguments.ContainsKey(type))
+								ExtraArguments[type] += " " + trimmedarg;
+							else
+								ExtraArguments[type] = trimmedarg;
+						}
+						break;
 
-                    case "engine": Engine = value; break;
-                    case "game": Mod = value; break;
+					case "engine": Engine = value; break;
+					case "game": Mod = value; break;
 					case "map": Map = value; break;
 					case "demo": Demo = value; break;
 					case "skill": Skill = value; break;
-                    case "class": Class = value; break;
-                    case "basegame": int.TryParse(value, out Game);	break;
+					case "class": Class = value; break;
+					case "basegame": int.TryParse(value, out Game);	break;
 
 					default:
 						System.Windows.MessageBox.Show("Got unknown configuration parameter:\n'" + line + "'", App.ErrorMessageTitle);
@@ -103,14 +103,14 @@ namespace mxd.SQL2.Data
 			if(!string.IsNullOrEmpty(Map)) sb.AppendLine("map" + separator[0] + Map);
 			if(!string.IsNullOrEmpty(Demo)) sb.AppendLine("demo" + separator[0] + Demo);
 			if(!string.IsNullOrEmpty(Skill) && Skill != SkillItem.Default.Value) sb.AppendLine("skill" + separator[0] + Skill);
-            if(!string.IsNullOrEmpty(Class) && Class != ClassItem.Default.Value) sb.AppendLine("class" + separator[0] + Class);
-            if(Game > 0) sb.AppendLine("basegame" + separator[0] + Game);
-		    if(ExtraArguments.Count > 0)
-		    {
-		        var args = new List<string>();
-		        foreach(var group in ExtraArguments) args.Add(ItemTypes.Types[group.Key] + " " + group.Value);
-                sb.AppendLine("extraargs" + separator[0] + string.Join(extraargsseparator[0], args.ToArray()));
-		    }
+			if(!string.IsNullOrEmpty(Class) && Class != ClassItem.Default.Value) sb.AppendLine("class" + separator[0] + Class);
+			if(Game > 0) sb.AppendLine("basegame" + separator[0] + Game);
+			if(ExtraArguments.Count > 0)
+			{
+				var args = new List<string>();
+				foreach(var group in ExtraArguments) args.Add(ItemTypes.Types[group.Key] + " " + group.Value);
+				sb.AppendLine("extraargs" + separator[0] + string.Join(extraargsseparator[0], args.ToArray()));
+			}
 
 			try
 			{
@@ -118,7 +118,7 @@ namespace mxd.SQL2.Data
 			}
 			catch(Exception ex)
 			{
-                System.Windows.MessageBox.Show("Unable to save configuration file '" + configpath + "'!\n" + ex.GetType().Name + ": " + ex.Message, App.ErrorMessageTitle);
+				System.Windows.MessageBox.Show("Unable to save configuration file '" + configpath + "'!\n" + ex.GetType().Name + ": " + ex.Message, App.ErrorMessageTitle);
 			}
 		}
 

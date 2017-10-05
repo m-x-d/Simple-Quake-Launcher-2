@@ -44,11 +44,11 @@ namespace mxd.SQL2.Games
 			// Nothing to ignore
 			ignoredmapprefix = string.Empty;
 
-            // Demo extensions
-		    supporteddemoextensions.Add(".dm2");
+			// Demo extensions
+			supporteddemoextensions.Add(".dm2");
 
-            // Setup map delegates
-            getfoldermaps = DirectoryReader.GetMaps;
+			// Setup map delegates
+			getfoldermaps = DirectoryReader.GetMaps;
 			getpakmaps = PAKReader.GetMaps;
 			getpk3maps = PK3Reader.GetMaps;
 

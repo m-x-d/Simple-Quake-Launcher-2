@@ -13,16 +13,16 @@ namespace mxd.SQL2.Tools
 {
 	internal static class DisplayTools
 	{
-        #region ================= Imports/consts
+		#region ================= Imports/consts
 
-        [DllImport("user32.dll")]
+		[DllImport("user32.dll")]
 		private static extern bool EnumDisplaySettings(string deviceName, int modeNum, ref DeviceMode devMode);
 
-        #endregion
+		#endregion
 
-        #region ================= Structs
+		#region ================= Structs
 
-        [StructLayout(LayoutKind.Sequential)]
+		[StructLayout(LayoutKind.Sequential)]
 		private struct DeviceMode
 		{
 			private const int CCHDEVICENAME = 0x20;
@@ -61,11 +61,11 @@ namespace mxd.SQL2.Tools
 			public int dmPanningHeight;
 		}
 
-        #endregion
+		#endregion
 
-        #region ================= Methods
+		#region ================= Methods
 
-        public static IEnumerable<ResolutionItem> GetVideoModes()
+		public static IEnumerable<ResolutionItem> GetVideoModes()
 		{
 			DeviceMode dm = new DeviceMode();
 			var modes = new Dictionary<string, ResolutionItem>(1);

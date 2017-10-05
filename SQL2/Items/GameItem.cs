@@ -10,16 +10,16 @@ namespace mxd.SQL2.Items
 
 		private readonly string modfolder;
 
-        #endregion
+		#endregion
 
-        #region ================= Properties
-        
-        // Value: -hipnotic
-        // Title: EP1: Scourge of Armagon
-        public string ModFolder => modfolder; // c:\Quake\mymod
+		#region ================= Properties
+		
+		// Value: -hipnotic
+		// Title: EP1: Scourge of Armagon
+		public string ModFolder => modfolder; // c:\Quake\mymod
 
-        public override ItemType Type => ItemType.GAME;
-        private new bool IsRandom; // No random base games
+		public override ItemType Type => ItemType.GAME;
+		private new bool IsRandom; // No random base games
 
 		#endregion
 
@@ -29,7 +29,7 @@ namespace mxd.SQL2.Items
 		public GameItem(string name, string modfolder, string arg) : base(name, arg)
 		{
 			this.modfolder = Path.Combine(App.GamePath, modfolder);
-		    this.isdefault = (string.Equals(GameHandler.Current.DefaultModPath, this.modfolder, StringComparison.OrdinalIgnoreCase));
+			this.isdefault = (string.Equals(GameHandler.Current.DefaultModPath, this.modfolder, StringComparison.OrdinalIgnoreCase));
 		}
 
 		#endregion

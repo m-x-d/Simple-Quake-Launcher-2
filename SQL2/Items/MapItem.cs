@@ -30,12 +30,12 @@
 			maptitle = title;
 		}
 
-        // e1m1
+		// e1m1
 		public MapItem(string mapname) : base(mapname, mapname)
 		{
 			maptitle = mapname;
 		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

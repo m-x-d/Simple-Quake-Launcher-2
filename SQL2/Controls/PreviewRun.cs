@@ -8,50 +8,50 @@ using mxd.SQL2.Items;
 
 namespace mxd.SQL2.Controls
 {
-    public class PreviewRun : Run
-    {
-	    #region ================= Variables
+	public class PreviewRun : Run
+	{
+		#region ================= Variables
 
 		private readonly bool editable;
-        private readonly ItemType itemtype;
-        private readonly AbstractItem item;
+		private readonly ItemType itemtype;
+		private readonly AbstractItem item;
 
 		#endregion
 
-	    #region ================= Properties
+		#region ================= Properties
 
 		public bool IsEditable => editable; // Doesn't actually block text editability...
-        public ItemType ItemType => itemtype;
-        public AbstractItem Item => item;
+		public ItemType ItemType => itemtype;
+		public AbstractItem Item => item;
 
 		#endregion
 
 		#region ================= Constructor
 
-	    public PreviewRun() { }
+		public PreviewRun() { }
 
 		public PreviewRun(string text, AbstractItem item, ItemType itemtype, bool editable)
-        {
-            base.SetValue(Run.TextProperty, text);
-            this.itemtype = itemtype;
-            this.item = item;
-            this.editable = editable;
+		{
+			base.SetValue(Run.TextProperty, text);
+			this.itemtype = itemtype;
+			this.item = item;
+			this.editable = editable;
 
-            if(editable)
-            {
-                this.SetValue(TextElement.ForegroundProperty, SystemColors.HotTrackBrush);
-                this.SetValue(TextElement.BackgroundProperty, SystemColors.GradientInactiveCaptionBrush);
-            }
-        }
+			if(editable)
+			{
+				this.SetValue(TextElement.ForegroundProperty, SystemColors.HotTrackBrush);
+				this.SetValue(TextElement.BackgroundProperty, SystemColors.GradientInactiveCaptionBrush);
+			}
+		}
 
 		#endregion
 
-	    #region ================= Methods
+		#region ================= Methods
 
 		public override string ToString()
-        {
-            return this.Text;
-        }
+		{
+			return this.Text;
+		}
 
 		#endregion
 	}

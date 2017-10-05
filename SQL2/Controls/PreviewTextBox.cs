@@ -12,27 +12,27 @@ using mxd.SQL2.Items;
 
 namespace mxd.SQL2.Controls
 {
-    public class PreviewTextBox : RichTextBox
-    {
-	    #region ================= Variables
+	public class PreviewTextBox : RichTextBox
+	{
+		#region ================= Variables
 
-	    private const string spacer = "  ";
-	    private readonly Paragraph paragraph;
+		private const string spacer = "  ";
+		private readonly Paragraph paragraph;
 
 		#endregion
 
 		#region ================= Constructor
 
 		public PreviewTextBox()
-        {
-	        paragraph = (Paragraph)this.Document.Blocks.FirstBlock;
+		{
+			paragraph = (Paragraph)this.Document.Blocks.FirstBlock;
 
 			// Bind events
-	        DataObject.AddPastingHandler(this, OnPaste);
+			DataObject.AddPastingHandler(this, OnPaste);
 			this.PreviewKeyDown += OnPreviewKeyDown;
 			this.KeyUp += OnKeyUp;
 			this.SelectionChanged += OnSelectionChanged;
-        }
+		}
 
 		#endregion
 
@@ -117,52 +117,52 @@ namespace mxd.SQL2.Controls
 			Configuration.ExtraArguments = customargslist;
 		}
 
-	    #endregion
+		#endregion
 
 		#region ================= Text handling methods
 
 		private List<PreviewRun> GetSelectedRuns(TextSelection selection)
-        {
-            var result = new List<PreviewRun>();
-            if(paragraph.Inlines.Count > 0)
-            {
-                var startrun = (PreviewRun)selection.Start.Parent;
-                result.Add(startrun);
+		{
+			var result = new List<PreviewRun>();
+			if(paragraph.Inlines.Count > 0)
+			{
+				var startrun = (PreviewRun)selection.Start.Parent;
+				result.Add(startrun);
 
-                // Add the rest of the runs, if necessary
-                if(!selection.IsEmpty)
-                {
-                    var endrun = (PreviewRun)selection.End.Parent;
-                    if(startrun != endrun)
-                    {
-                        var startfound = false;
-                        foreach(PreviewRun run in paragraph.Inlines)
-                        {
-                            // Skip until startrun...
-                            if(!startfound && !run.Equals(startrun)) continue;
+				// Add the rest of the runs, if necessary
+				if(!selection.IsEmpty)
+				{
+					var endrun = (PreviewRun)selection.End.Parent;
+					if(startrun != endrun)
+					{
+						var startfound = false;
+						foreach(PreviewRun run in paragraph.Inlines)
+						{
+							// Skip until startrun...
+							if(!startfound && !run.Equals(startrun)) continue;
 
-                            if(!startfound) // First run was already added, so skip it as well...
-                            {
-                                startfound = true;
-                                continue;
-                            }
+							if(!startfound) // First run was already added, so skip it as well...
+							{
+								startfound = true;
+								continue;
+							}
 
-                            result.Add(run);
-                            if(run.Equals(endrun)) break;
-                        }
-                    }
-                }
-            }
+							result.Add(run);
+							if(run.Equals(endrun)) break;
+						}
+					}
+				}
+			}
 
-            return result;
-        }
+			return result;
+		}
 
 		#endregion
 
 		#region ================= Events
 
 		private void OnPreviewKeyDown(object sender, KeyEventArgs e)
-	    {
+		{
 			if(this.IsReadOnly) return; // Can't be edited
 			
 			// Delete and Backspace require special handling...
@@ -182,8 +182,8 @@ namespace mxd.SQL2.Controls
 			}
 		}
 
-	    private void OnKeyUp(object sender, KeyEventArgs e)
-	    {
+		private void OnKeyUp(object sender, KeyEventArgs e)
+		{
 			var runs = GetSelectedRuns(this.Selection);
 			if(runs.Count == 1)
 			{
@@ -198,7 +198,7 @@ namespace mxd.SQL2.Controls
 					this.Selection.Select(nextsel, nextsel);
 					currun = (PreviewRun)currun.NextInline;
 				} 
-                // Move selection backward when at the start of non-editable run and previous run is editable...
+				// Move selection backward when at the start of non-editable run and previous run is editable...
 				else if(e.Key == Key.Delete && this.Selection.IsEmpty && !currun.IsEditable && currun.PreviousInline != null
 					&& ((PreviewRun)currun.PreviousInline).IsEditable && ((PreviewRun)currun.PreviousInline).Text.Length > 0
 					&& this.Selection.Start.GetOffsetToPosition(currun.ContentStart) == 0)
@@ -235,60 +235,60 @@ namespace mxd.SQL2.Controls
 		}
 
 		// Toggle textbox editability based on selection
-	    private void OnSelectionChanged(object sender, RoutedEventArgs e)
-	    {
+		private void OnSelectionChanged(object sender, RoutedEventArgs e)
+		{
 			var runs = GetSelectedRuns(this.Selection);
 
 			// Fix selection bleeding into the next non-editable run when double-clicking the last word of editable run...
-		    if(runs.Count == 2)
-		    {
-			    var first = runs[0];
-			    var second = runs[1];
+			if(runs.Count == 2)
+			{
+				var first = runs[0];
+				var second = runs[1];
 
-			    if(first.IsEditable && !second.IsEditable && !string.IsNullOrEmpty(first.Text.Trim()))
-			    {
-				    if(second.ContentStart.GetOffsetToPosition(this.Selection.End) == 1 && second.Text.StartsWith(" "))
-				    {
-					    var selend = (first.Text.EndsWith(" ") ? first.ContentEnd.GetPositionAtOffset(-1) : first.ContentEnd);
-					    this.Selection.Select(this.Selection.Start, selend);
-					    this.IsReadOnly = false;
+				if(first.IsEditable && !second.IsEditable && !string.IsNullOrEmpty(first.Text.Trim()))
+				{
+					if(second.ContentStart.GetOffsetToPosition(this.Selection.End) == 1 && second.Text.StartsWith(" "))
+					{
+						var selend = (first.Text.EndsWith(" ") ? first.ContentEnd.GetPositionAtOffset(-1) : first.ContentEnd);
+						this.Selection.Select(this.Selection.Start, selend);
+						this.IsReadOnly = false;
 						return;
-				    }
-			    }
-		    }
+					}
+				}
+			}
 
 			// Prevent editing when non-editable runs are selected...
-		    foreach(var run in runs)
-		    {
-			    if(!run.IsEditable)
-			    {
-				    this.IsReadOnly = true;
-				    return;
-			    }
-		    }
+			foreach(var run in runs)
+			{
+				if(!run.IsEditable)
+				{
+					this.IsReadOnly = true;
+					return;
+				}
+			}
 
-		    this.IsReadOnly = false;
+			this.IsReadOnly = false;
 		}
 
-	    private void OnPaste(object sender, DataObjectPastingEventArgs e)
-	    {
+		private void OnPaste(object sender, DataObjectPastingEventArgs e)
+		{
 			// Native implementation creates a copy of PreviewRun using parameterless constructor, without needed properties, so cancel that...
 			e.CancelCommand();
 
 			var runs = GetSelectedRuns(this.Selection);
-		    if(runs.Count != 1 || !runs[0].IsEditable) return;
+			if(runs.Count != 1 || !runs[0].IsEditable) return;
 
-		    string pasted = Clipboard.GetText();
-		    if(!string.IsNullOrEmpty(pasted))
-		    {
-			    // Delete selected text
-			    if(!this.Selection.IsEmpty)
-				    this.Selection.Start.DeleteTextInRun(this.Selection.Start.GetOffsetToPosition(this.Selection.End));
+			string pasted = Clipboard.GetText();
+			if(!string.IsNullOrEmpty(pasted))
+			{
+				// Delete selected text
+				if(!this.Selection.IsEmpty)
+					this.Selection.Start.DeleteTextInRun(this.Selection.Start.GetOffsetToPosition(this.Selection.End));
 
-			    // Instert text manually...
+				// Instert text manually...
 				this.Selection.Start.InsertTextInRun(pasted);
 			}
-	    }
+		}
 
 		#endregion
 	}

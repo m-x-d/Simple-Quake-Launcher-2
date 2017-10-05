@@ -12,9 +12,9 @@ namespace mxd.SQL2.Tools
 {
 	public static class DirectoryReader
 	{
-        #region ================= Maps
+		#region ================= Maps
 
-        public static void GetMaps(string modpath, Dictionary<string, MapItem> mapslist, GameHandler.GetMapInfoDelegate getmapinfo)
+		public static void GetMaps(string modpath, Dictionary<string, MapItem> mapslist, GameHandler.GetMapInfoDelegate getmapinfo)
 		{
 			DirectoryInfo mapdir = new DirectoryInfo(Path.Combine(modpath, "maps"));
 			if(!mapdir.Exists) return;
@@ -51,42 +51,42 @@ namespace mxd.SQL2.Tools
 			return false;
 		}
 
-        #endregion
+		#endregion
 
-        #region ================= Demos
+		#region ================= Demos
 
-        public static List<DemoItem> GetDemos(string modpath, string demosfolder)
-        {
-            var result = new List<DemoItem>();
-	        if(!string.IsNullOrEmpty(demosfolder))
-	        {
-		        modpath = Path.Combine(modpath, demosfolder);
-		        if(!Directory.Exists(modpath)) return result;
+		public static List<DemoItem> GetDemos(string modpath, string demosfolder)
+		{
+			var result = new List<DemoItem>();
+			if(!string.IsNullOrEmpty(demosfolder))
+			{
+				modpath = Path.Combine(modpath, demosfolder);
+				if(!Directory.Exists(modpath)) return result;
 			}
 
-            // Get demo files. Can be in subfolders
-            foreach(string ext in GameHandler.Current.SupportedDemoExtensions) // .dem, etc
-            {
-                // Try to get data from demo files...
-                foreach(string file in Directory.GetFiles(modpath, "*" + ext, SearchOption.AllDirectories))
-                {
-                    using(var stream = File.OpenRead(file))
-                    {
-                        if(stream.Length > 67)
-                        {
-                            using(var br = new BinaryReader(stream, Encoding.ASCII))
-                            {
-                                string relativedemopath = file.Substring(modpath.Length + 1);
-                                GameHandler.Current.AddDemoItem(relativedemopath, result, br);
-                            }
-                        }
-                    }
-                }
-            }
+			// Get demo files. Can be in subfolders
+			foreach(string ext in GameHandler.Current.SupportedDemoExtensions) // .dem, etc
+			{
+				// Try to get data from demo files...
+				foreach(string file in Directory.GetFiles(modpath, "*" + ext, SearchOption.AllDirectories))
+				{
+					using(var stream = File.OpenRead(file))
+					{
+						if(stream.Length > 67)
+						{
+							using(var br = new BinaryReader(stream, Encoding.ASCII))
+							{
+								string relativedemopath = file.Substring(modpath.Length + 1);
+								GameHandler.Current.AddDemoItem(relativedemopath, result, br);
+							}
+						}
+					}
+				}
+			}
 
-            return result;
-        }
+			return result;
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

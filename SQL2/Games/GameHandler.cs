@@ -26,40 +26,40 @@ namespace mxd.SQL2.Games
 		protected HashSet<string> supporteddemoextensions; // .dem, .mvd, .qvd etc.
 		protected Dictionary<string, GameItem> basegames; // Quake-specific game flags; <folder name, BaseGameItem>
 		protected List<SkillItem> skills; // Easy, Medium, Hard, Nightmare!
-        protected List<ClassItem> classes; // Cleric, Paladin, Necromancer [default], Assassin, Demoness [Hexen 2 only]
+		protected List<ClassItem> classes; // Cleric, Paladin, Necromancer [default], Assassin, Demoness [Hexen 2 only]
 
-        private HashSet<string> mapnames;
-        private List<string> skillnames;
-        private List<string> classnames; // [Hexen 2 only]
+		private HashSet<string> mapnames;
+		private List<string> skillnames;
+		private List<string> classnames; // [Hexen 2 only]
 
-        private static string supportedgames; // "Quake / Quake II / Hexen 2 / Half-Life"
+		private static string supportedgames; // "Quake / Quake II / Hexen 2 / Half-Life"
 		private static GameHandler current;
 
 		// Command line
-	    protected Dictionary<ItemType, string> launchparams; 
+		protected Dictionary<ItemType, string> launchparams; 
 
 		#endregion
 
 		#region ================= Properties
 
 		public abstract string GameTitle { get; } // Quake / Quake II / Hexen 2 / Half-Life etc.
-	    public Dictionary<ItemType, string> LaunchParameters => launchparams;
-        public string DefaultModPath => defaultmodpath; // c:\games\Quake\ID1, c:\games\Quake2\baseq2 etc.
+		public Dictionary<ItemType, string> LaunchParameters => launchparams;
+		public string DefaultModPath => defaultmodpath; // c:\games\Quake\ID1, c:\games\Quake2\baseq2 etc.
 		public string GamePath => gamepath;
-	    public string IgnoredMapPrefix => ignoredmapprefix;
-	    public HashSet<string> SupportedDemoExtensions => supporteddemoextensions;
-	    public ICollection<GameItem> BaseGames => basegames.Values;
-	    public List<SkillItem> Skills => skills;
-	    public List<ClassItem> Classes => classes;
+		public string IgnoredMapPrefix => ignoredmapprefix;
+		public HashSet<string> SupportedDemoExtensions => supporteddemoextensions;
+		public ICollection<GameItem> BaseGames => basegames.Values;
+		public List<SkillItem> Skills => skills;
+		public List<ClassItem> Classes => classes;
 
-	    #endregion
+		#endregion
 
-        #region ================= Static properties
+		#region ================= Static properties
 
-        public static string SupportedGames => supportedgames;
-	    public static GameHandler Current => current;
+		public static string SupportedGames => supportedgames;
+		public static GameHandler Current => current;
 
-	    #endregion
+		#endregion
 
 		#region ================= Delegates
 
@@ -76,16 +76,16 @@ namespace mxd.SQL2.Games
 		protected delegate bool PakContainsMapsDelegate(string modpath);
 		protected delegate bool PK3ContainsMapsDelegate(string modpath);
 
-        // Demo info retrieval
-        public delegate DemoItem GetDemoInfoDelegate(string demoname, BinaryReader reader);
+		// Demo info retrieval
+		public delegate DemoItem GetDemoInfoDelegate(string demoname, BinaryReader reader);
 
-        // Demos gathering
-        protected delegate List<DemoItem> GetFolderDemosDelegate(string modpath, string demosfolder);
-        protected delegate List<DemoItem>    GetPakDemosDelegate(string modpath, string demosfolder);
-        protected delegate List<DemoItem>    GetPK3DemosDelegate(string modpath, string demosfolder);
+		// Demos gathering
+		protected delegate List<DemoItem> GetFolderDemosDelegate(string modpath, string demosfolder);
+		protected delegate List<DemoItem>    GetPakDemosDelegate(string modpath, string demosfolder);
+		protected delegate List<DemoItem>    GetPK3DemosDelegate(string modpath, string demosfolder);
 
-        // Map title retrieval instance
-        protected GetMapInfoDelegate getmapinfo;
+		// Map title retrieval instance
+		protected GetMapInfoDelegate getmapinfo;
 
 		// Maps gathering instances
 		protected GetFolderMapsDelegate getfoldermaps;
@@ -97,73 +97,73 @@ namespace mxd.SQL2.Games
 		protected PakContainsMapsDelegate pakscontainmaps;
 		protected PK3ContainsMapsDelegate pk3scontainmaps;
 
-        // Demo info retrieval instance
-        protected GetDemoInfoDelegate getdemoinfo;
+		// Demo info retrieval instance
+		protected GetDemoInfoDelegate getdemoinfo;
 
-        // Demo gathering instances
-        protected GetFolderDemosDelegate getfolderdemos;
-        protected GetPakDemosDelegate getpakdemos;
-        protected GetPK3DemosDelegate getpk3demos;
+		// Demo gathering instances
+		protected GetFolderDemosDelegate getfolderdemos;
+		protected GetPakDemosDelegate getpakdemos;
+		protected GetPK3DemosDelegate getpk3demos;
 
-        #endregion
+		#endregion
 
-        #region ================= Constructor / Setup
+		#region ================= Constructor / Setup
 
-        protected GameHandler()
+		protected GameHandler()
 		{
-            launchparams = new Dictionary<ItemType, string>();
-            basegames = new Dictionary<string, GameItem>(StringComparer.OrdinalIgnoreCase);
+			launchparams = new Dictionary<ItemType, string>();
+			basegames = new Dictionary<string, GameItem>(StringComparer.OrdinalIgnoreCase);
 			mapnames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            skills = new List<SkillItem>();
-            classes = new List<ClassItem>();
-            skillnames = new List<string>();
-            classnames = new List<string>();
-		    supporteddemoextensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        }
+			skills = new List<SkillItem>();
+			classes = new List<ClassItem>();
+			skillnames = new List<string>();
+			classnames = new List<string>();
+			supporteddemoextensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+		}
 
-	    protected abstract bool CanHandle(string gamepath);
+		protected abstract bool CanHandle(string gamepath);
 
 		protected virtual void Setup(string gamepath) // c:\games\Quake
 		{
 #if DEBUG
-            CheckItems(basegames.Values.ToArray());
+			CheckItems(basegames.Values.ToArray());
 			CheckItems(skills.ToArray());
-            CheckItems(classes.ToArray());
+			CheckItems(classes.ToArray());
 
-		    SkillItem defaultskill = null;
-            foreach(var skill in skills)
-            {
-                skillnames.Add(skill.Value);
-                if(skill.IsDefault)
-                {
-                    defaultskill = skill;
-                    break;
-                }
-            }
+			SkillItem defaultskill = null;
+			foreach(var skill in skills)
+			{
+				skillnames.Add(skill.Value);
+				if(skill.IsDefault)
+				{
+					defaultskill = skill;
+					break;
+				}
+			}
 
-		    ClassItem defaultclass = null;
-            foreach(var pclass in classes)
-            {
-                classnames.Add(pclass.Value);
-                if(pclass.IsDefault)
-                {
-                    defaultclass = pclass;
-                    break;
-                }
-            }
+			ClassItem defaultclass = null;
+			foreach(var pclass in classes)
+			{
+				classnames.Add(pclass.Value);
+				if(pclass.IsDefault)
+				{
+					defaultclass = pclass;
+					break;
+				}
+			}
 
-            if(skills.Count > 0 && defaultskill == null) throw new InvalidDataException("No default skill specified!");
-            if(classes.Count > 0 && defaultclass == null) throw new InvalidDataException("No default class specified!");
+			if(skills.Count > 0 && defaultskill == null) throw new InvalidDataException("No default skill specified!");
+			if(classes.Count > 0 && defaultclass == null) throw new InvalidDataException("No default class specified!");
 #endif
 
-            // Add random skill and class
-		    if(skills.Count > 1) skills.Insert(0, SkillItem.Random);
-            if(skills.Count > 0) skills.Insert(0, SkillItem.Default);
+			// Add random skill and class
+			if(skills.Count > 1) skills.Insert(0, SkillItem.Random);
+			if(skills.Count > 0) skills.Insert(0, SkillItem.Default);
 
-            if(classes.Count > 1) classes.Insert(0, ClassItem.Random);
-            if(classes.Count > 0) classes.Insert(0, ClassItem.Default);
+			if(classes.Count > 1) classes.Insert(0, ClassItem.Random);
+			if(classes.Count > 0) classes.Insert(0, ClassItem.Default);
 
-            this.gamepath = gamepath;
+			this.gamepath = gamepath;
 		}
 
 		#endregion
@@ -193,18 +193,18 @@ namespace mxd.SQL2.Games
 			return demos;
 		}
 
-	    protected virtual void AddDemos(List<DemoItem> demos, List<DemoItem> newdemos, HashSet<string> nameshash)
-	    {
-	        foreach(DemoItem di in newdemos)
-	        {
-	            string hash = Path.GetFileName(di.MapFilePath) + di.Title;
-	            if(!nameshash.Contains(hash))
-	            {
-	                nameshash.Add(hash);
-                    demos.Add(di);
-                }
-	        }
-	    }
+		protected virtual void AddDemos(List<DemoItem> demos, List<DemoItem> newdemos, HashSet<string> nameshash)
+		{
+			foreach(DemoItem di in newdemos)
+			{
+				string hash = Path.GetFileName(di.MapFilePath) + di.Title;
+				if(!nameshash.Contains(hash))
+				{
+					nameshash.Add(hash);
+					demos.Add(di);
+				}
+			}
+		}
 
 		public virtual List<MapItem> GetMaps(string modpath) // c:\Quake\MyMod
 		{
@@ -234,12 +234,12 @@ namespace mxd.SQL2.Games
 			{
 				if(Path.GetFileNameWithoutExtension(engine) == App.AppName) continue; // We is not engine. We is cat!
 
-                ImageSource img = null;
-			    using(var i = Icon.ExtractAssociatedIcon(engine))
-			    {
-                    if(i != null)
-                        img = Imaging.CreateBitmapSourceFromHIcon(i.Handle, new Int32Rect(0, 0, i.Width, i.Height), BitmapSizeOptions.FromEmptyOptions());
-                }
+				ImageSource img = null;
+				using(var i = Icon.ExtractAssociatedIcon(engine))
+				{
+					if(i != null)
+						img = Imaging.CreateBitmapSourceFromHIcon(i.Handle, new Int32Rect(0, 0, i.Width, i.Height), BitmapSizeOptions.FromEmptyOptions());
+				}
 
 				result.Add(new EngineItem(img, engine));
 			}
@@ -247,18 +247,18 @@ namespace mxd.SQL2.Games
 			return result;
 		}
 
-	    public virtual string GetRandomItem(ItemType type)
-	    {
-	        switch(type)
-	        {
-                case ItemType.CLASS: return (classnames.Count > 0 ? classnames[App.Random.Next(0, classnames.Count)] : "0");
-                case ItemType.SKILL: return (skillnames.Count > 0 ? skillnames[App.Random.Next(0, skillnames.Count)] : "0");
-                case ItemType.MAP: return mapnames.ElementAt(App.Random.Next(0, mapnames.Count));
-                default: throw new Exception("GetRandomItem: unsupported ItemType!");
-	        }
-	    }
+		public virtual string GetRandomItem(ItemType type)
+		{
+			switch(type)
+			{
+				case ItemType.CLASS: return (classnames.Count > 0 ? classnames[App.Random.Next(0, classnames.Count)] : "0");
+				case ItemType.SKILL: return (skillnames.Count > 0 ? skillnames[App.Random.Next(0, skillnames.Count)] : "0");
+				case ItemType.MAP: return mapnames.ElementAt(App.Random.Next(0, mapnames.Count));
+				default: throw new Exception("GetRandomItem: unsupported ItemType!");
+			}
+		}
 
-        #endregion
+		#endregion
 
 		#region ================= Utility methods
 
@@ -276,32 +276,32 @@ namespace mxd.SQL2.Games
 			return false;
 		}
 
-	    public virtual void AddDemoItem(string relativedemopath, List<DemoItem> demos, BinaryReader reader)
-	    {
-		    relativedemopath = relativedemopath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-			DemoItem di = getdemoinfo(relativedemopath, reader);
-            if(di != null)
-            {
-                // Check if we have a matching map...
-                if(!mapnames.Contains(Path.GetFileNameWithoutExtension(di.MapFilePath)))
-                    demos.Add(new DemoItem(relativedemopath, "Missing map file: '" + di.MapFilePath + "'")); // Add anyway, but with a warning...
-                else
-                    demos.Add(di);
-            }
-            else
-            {
-                // Add anyway, I guess...
-                demos.Add(new DemoItem(relativedemopath, "Unknown demo format"));
-            }
-        }
-
-        // Debug checks...
-#if DEBUG
-        private static void CheckItems(ICollection<AbstractItem> items)
+		public virtual void AddDemoItem(string relativedemopath, List<DemoItem> demos, BinaryReader reader)
 		{
-            if(items.Count == 0) return;
+			relativedemopath = relativedemopath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+			DemoItem di = getdemoinfo(relativedemopath, reader);
+			if(di != null)
+			{
+				// Check if we have a matching map...
+				if(!mapnames.Contains(Path.GetFileNameWithoutExtension(di.MapFilePath)))
+					demos.Add(new DemoItem(relativedemopath, "Missing map file: '" + di.MapFilePath + "'")); // Add anyway, but with a warning...
+				else
+					demos.Add(di);
+			}
+			else
+			{
+				// Add anyway, I guess...
+				demos.Add(new DemoItem(relativedemopath, "Unknown demo format"));
+			}
+		}
 
-            bool founddefault = false;
+		// Debug checks...
+#if DEBUG
+		private static void CheckItems(ICollection<AbstractItem> items)
+		{
+			if(items.Count == 0) return;
+
+			bool founddefault = false;
 			foreach(var item in items)
 			{
 				if(item.IsDefault)
@@ -317,9 +317,9 @@ namespace mxd.SQL2.Games
 
 #endregion
 
-        #region ================= Instancing
+		#region ================= Instancing
 
-        public static bool Create(string gamepath) // c:\games\Quake
+		public static bool Create(string gamepath) // c:\games\Quake
 		{
 			// Try to get appropriate game handler
 			List<string> gametitles = new List<string>();
@@ -328,17 +328,17 @@ namespace mxd.SQL2.Games
 			{
 				var gh = (GameHandler)Activator.CreateInstance(type);
 				gametitles.Add(gh.GameTitle);
-			    if(current == null && gh.CanHandle(gamepath))
-			    {
-			        current = gh;
-                    gh.Setup(gamepath); // GameItems created in Setup() reference GameHandler.Current...
-			    }
-            }
+				if(current == null && gh.CanHandle(gamepath))
+				{
+					current = gh;
+					gh.Setup(gamepath); // GameItems created in Setup() reference GameHandler.Current...
+				}
+			}
 
 			// Store all titles
 			supportedgames = string.Join(" / ", gametitles.ToArray());
 
-		    return current != null;
+			return current != null;
 		}
 
 		#endregion

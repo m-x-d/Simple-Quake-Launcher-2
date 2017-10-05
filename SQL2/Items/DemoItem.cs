@@ -18,20 +18,20 @@ namespace mxd.SQL2.Items
 
 		private readonly string mapfilepath;
 		private readonly string maptitle;
-        private readonly bool isinvalid;
+		private readonly bool isinvalid;
 
-        #endregion
+		#endregion
 
-        #region ================= Properties
+		#region ================= Properties
 
-        // Value: demos\somedemo.dem
-        // Title: demos\somedemo.dem | map: Benis Devastation
-        public string MapFilePath => mapfilepath; // maps/somemap.bsp
-        public string MapTitle => maptitle; // Benis Devastation
-        public bool IsInvalid => isinvalid;
+		// Value: demos\somedemo.dem
+		// Title: demos\somedemo.dem | map: Benis Devastation
+		public string MapFilePath => mapfilepath; // maps/somemap.bsp
+		public string MapTitle => maptitle; // Benis Devastation
+		public bool IsInvalid => isinvalid;
 
-	    public override ItemType Type => ItemType.DEMO;
-        private new bool IsRandom; // No random demos
+		public override ItemType Type => ItemType.DEMO;
+		private new bool IsRandom; // No random demos
 
 		#endregion
 
@@ -50,7 +50,7 @@ namespace mxd.SQL2.Items
 
 		public DemoItem(string filename, string message) : base(filename + " | " + message, filename)
 		{
-            this.isinvalid = true;
+			this.isinvalid = true;
 			this.maptitle = Path.GetFileName(filename);
 		}
 

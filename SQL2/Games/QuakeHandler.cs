@@ -15,33 +15,33 @@ namespace mxd.SQL2.Games
 
 		public override string GameTitle => "Quake";
 
-        #endregion
+		#endregion
 
-        #region ================= Setup
+		#region ================= Setup
 
-	    // Valid Quake path if "id1\pak0.pak" and "id1\pak1.pak" exist, I guess...
-        protected override bool CanHandle(string gamepath)
-	    {
-	        foreach(var p in new[] { "id1\\pak0.pak", "id1\\pak1.pak" })
-	            if(!File.Exists(Path.Combine(gamepath, p))) return false;
-
-	        return true;
-	    }
-
-	    // Data initialization order matters (horrible, I know...)!
-        protected override void Setup(string gamepath)
+		// Valid Quake path if "id1\pak0.pak" and "id1\pak1.pak" exist, I guess...
+		protected override bool CanHandle(string gamepath)
 		{
-            // Default mod path
-            defaultmodpath = Path.Combine(gamepath, "ID1").ToLowerInvariant();
+			foreach(var p in new[] { "id1\\pak0.pak", "id1\\pak1.pak" })
+				if(!File.Exists(Path.Combine(gamepath, p))) return false;
 
-            // Ignore props
-            ignoredmapprefix = "b_";
+			return true;
+		}
 
-		    // Demo extensions
-		    supporteddemoextensions.Add(".dem");
+		// Data initialization order matters (horrible, I know...)!
+		protected override void Setup(string gamepath)
+		{
+			// Default mod path
+			defaultmodpath = Path.Combine(gamepath, "ID1").ToLowerInvariant();
 
-            // Setup map delegates
-            getfoldermaps = DirectoryReader.GetMaps;
+			// Ignore props
+			ignoredmapprefix = "b_";
+
+			// Demo extensions
+			supporteddemoextensions.Add(".dem");
+
+			// Setup map delegates
+			getfoldermaps = DirectoryReader.GetMaps;
 			getpakmaps = PAKReader.GetMaps;
 			getpk3maps = PK3Reader.GetMaps;
 
@@ -51,34 +51,34 @@ namespace mxd.SQL2.Games
 
 			getmapinfo = QuakeBSPReader.GetMapInfo;
 
-            // Setup demo delegates
-            getfolderdemos = DirectoryReader.GetDemos;
-            getpakdemos = PAKReader.GetDemos;
-            getpk3demos = PK3Reader.GetDemos;
+			// Setup demo delegates
+			getfolderdemos = DirectoryReader.GetDemos;
+			getpakdemos = PAKReader.GetDemos;
+			getpk3demos = PK3Reader.GetDemos;
 
-            getdemoinfo = QuakeDemoReader.GetDemoInfo;
+			getdemoinfo = QuakeDemoReader.GetDemoInfo;
 
-            // Setup launch params
-            launchparams[ItemType.ENGINE] = string.Empty;
-            launchparams[ItemType.RESOLUTION] = "-window -width {0} -height {1}";
-            launchparams[ItemType.GAME] = string.Empty;
-            launchparams[ItemType.MOD] = "-game {0}";
-            launchparams[ItemType.MAP] = "+map {0}";
-            launchparams[ItemType.SKILL] = "+skill {0}";
-            launchparams[ItemType.CLASS] = string.Empty;
-            launchparams[ItemType.DEMO] = "+playdemo {0}";
+			// Setup launch params
+			launchparams[ItemType.ENGINE] = string.Empty;
+			launchparams[ItemType.RESOLUTION] = "-window -width {0} -height {1}";
+			launchparams[ItemType.GAME] = string.Empty;
+			launchparams[ItemType.MOD] = "-game {0}";
+			launchparams[ItemType.MAP] = "+map {0}";
+			launchparams[ItemType.SKILL] = "+skill {0}";
+			launchparams[ItemType.CLASS] = string.Empty;
+			launchparams[ItemType.DEMO] = "+playdemo {0}";
 
-            // Setup skills (requires launchparams)
-            skills.AddRange(new[]
-            {
-                new SkillItem("Easy", "0"),
-                new SkillItem("Medium", "1", true),
-                new SkillItem("Hard", "2"),
-                new SkillItem("Nightmare!", "3")
-            });
+			// Setup skills (requires launchparams)
+			skills.AddRange(new[]
+			{
+				new SkillItem("Easy", "0"),
+				new SkillItem("Medium", "1", true),
+				new SkillItem("Hard", "2"),
+				new SkillItem("Nightmare!", "3")
+			});
 
-            // Setup basegames (requires defaultmodpath)
-            basegames["ID1"] = new GameItem("Quake", "id1", "");
+			// Setup basegames (requires defaultmodpath)
+			basegames["ID1"] = new GameItem("Quake", "id1", "");
 			basegames["QUOTH"] = new GameItem("Quoth", "quoth", "-quoth");
 			basegames["NEHAHRA"] = new GameItem("Nehahra", "nehahra", "-nehahra");
 			basegames["HIPNOTIC"] = new GameItem("EP1: Scourge of Armagon", "hipnotic", "-hipnotic");

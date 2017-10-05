@@ -20,8 +20,8 @@ namespace mxd.SQL2.Items
 		public readonly int Width;
 		public readonly int Height;
 
-        public override ItemType Type => ItemType.RESOLUTION;
-        private new bool IsRandom; // No random resolutions
+		public override ItemType Type => ItemType.RESOLUTION;
+		private new bool IsRandom; // No random resolutions
 
 		#endregion
 
@@ -35,17 +35,17 @@ namespace mxd.SQL2.Items
 			Height = height;
 		}
 
-	    protected override string GetArgument(string val)
-	    {
-		    int w, h;
-		    string[] pieces = value.Split(new[] { "x" }, StringSplitOptions.None);
-		    if(pieces.Length == 2 && int.TryParse(pieces[0], out w) && int.TryParse(pieces[1], out h))
+		protected override string GetArgument(string val)
+		{
+			int w, h;
+			string[] pieces = value.Split(new[] { "x" }, StringSplitOptions.None);
+			if(pieces.Length == 2 && int.TryParse(pieces[0], out w) && int.TryParse(pieces[1], out h))
 				return string.Format(param, w, h);
 
 			// Should never happen
-		    throw new InvalidDataException("Unexpected screen resolution: " + val);
-	    }
+			throw new InvalidDataException("Unexpected screen resolution: " + val);
+		}
 
-	    #endregion
+		#endregion
 	}
 }

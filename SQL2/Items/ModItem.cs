@@ -21,30 +21,30 @@ namespace mxd.SQL2.Items
 		private string modpath; // c:\quake\mymod
 		private bool isbuiltin; // true for mods enabled by special cmdline params, like -rogue
 
-        #endregion
+		#endregion
 
-        #region ================= Properties
+		#region ================= Properties
 
-        // Value: "Arcane Dimensions"
-        // Title: Arcane Dimensions
-        public string ModPath => modpath; // c:\quake\Arcane Dimensions
-        public bool IsBuiltIn => isbuiltin;
+		// Value: "Arcane Dimensions"
+		// Title: Arcane Dimensions
+		public string ModPath => modpath; // c:\quake\Arcane Dimensions
+		public bool IsBuiltIn => isbuiltin;
 
-        public override ItemType Type => ItemType.MOD;
-        private new bool IsRandom; // No random mods
+		public override ItemType Type => ItemType.MOD;
+		private new bool IsRandom; // No random mods
 
-        #endregion
+		#endregion
 
-        #region ================= Constructors
+		#region ================= Constructors
 
-        // mods\Arcane Dimensions, "c:\Quake\mods\Arcane Dimensions"
-        public ModItem(string modname, string modpath, bool isbuiltin = false) : base(modname, modname)
-        {
+		// mods\Arcane Dimensions, "c:\Quake\mods\Arcane Dimensions"
+		public ModItem(string modname, string modpath, bool isbuiltin = false) : base(modname, modname)
+		{
 #if DEBUG
 			if(!Directory.Exists(modpath)) throw new Exception("Invalid modpath!");
 #endif
-            this.modpath = modpath;
-            this.isbuiltin = isbuiltin;
+			this.modpath = modpath;
+			this.isbuiltin = isbuiltin;
 		}
 
 		// "MP2: Ground Zero", XATRIX, "c:\Quake2\XATRIX"
