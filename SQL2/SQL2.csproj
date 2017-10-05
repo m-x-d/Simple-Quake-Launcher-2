@@ -64,19 +64,19 @@
     <Compile Include="Controls\PreviewRun.cs" />
     <Compile Include="Controls\PreviewTextBox.cs" />
     <Compile Include="Data\Quake2Font.cs" />
-    <Compile Include="Games\Quake2Handler.cs" />
+    <Compile Include="Games\Quake2\Quake2Handler.cs" />
     <Compile Include="Items\ClassItem.cs" />
     <Compile Include="Items\ItemType.cs" />
     <Compile Include="Items\SkillItem.cs" />
     <Compile Include="Tools\BinaryReaderEx.cs" />
-    <Compile Include="Tools\DirectoryReader.cs" />
+    <Compile Include="DataReaders\DirectoryReader.cs" />
     <Compile Include="Tools\DisplayTools.cs" />
-    <Compile Include="Tools\PAKReader.cs" />
-    <Compile Include="Tools\PK3Reader.cs" />
-    <Compile Include="Tools\Quake2BSPReader.cs" />
-    <Compile Include="Tools\Quake2DemoReader.cs" />
-    <Compile Include="Tools\QuakeBSPReader.cs" />
-    <Compile Include="Tools\QuakeDemoReader.cs" />
+    <Compile Include="DataReaders\PAKReader.cs" />
+    <Compile Include="DataReaders\PK3Reader.cs" />
+    <Compile Include="Games\Quake2\Quake2BSPReader.cs" />
+    <Compile Include="Games\Quake2\Quake2DemoReader.cs" />
+    <Compile Include="Games\Quake\QuakeBSPReader.cs" />
+    <Compile Include="Games\Quake\QuakeDemoReader.cs" />
     <Compile Include="Tools\StringEx.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -89,7 +89,7 @@
     <Compile Include="Data\Configuration.cs" />
     <Compile Include="Data\QuakeFont.cs" />
     <Compile Include="Games\GameHandler.cs" />
-    <Compile Include="Games\QuakeHandler.cs" />
+    <Compile Include="Games\Quake\QuakeHandler.cs" />
     <Compile Include="Items\AbstractItem.cs" />
     <Compile Include="Items\DemoItem.cs" />
     <Compile Include="Items\EngineItem.cs" />
@@ -155,6 +155,9 @@
   <ItemGroup>
     <Resource Include="Resources\Desktop.png" />
     <Resource Include="Resources\Folder.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Games\Hexen2\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

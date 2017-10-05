@@ -5,10 +5,11 @@ using System.Collections.Generic;
 using System.IO;
 using mxd.SQL2.Data;
 using mxd.SQL2.Items;
+using mxd.SQL2.Tools;
 
 #endregion
 
-namespace mxd.SQL2.Tools
+namespace mxd.SQL2.Games.Quake2
 {
 	public static class Quake2DemoReader
 	{

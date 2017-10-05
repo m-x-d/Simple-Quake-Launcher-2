@@ -3,12 +3,13 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using mxd.SQL2.DataReaders;
 using mxd.SQL2.Items;
 using mxd.SQL2.Tools;
 
 #endregion
 
-namespace mxd.SQL2.Games
+namespace mxd.SQL2.Games.Quake2
 {
 	public class Quake2Handler : GameHandler
 	{

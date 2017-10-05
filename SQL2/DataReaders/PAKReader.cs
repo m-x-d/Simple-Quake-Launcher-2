@@ -6,10 +6,11 @@ using System.IO;
 using System.Text;
 using mxd.SQL2.Games;
 using mxd.SQL2.Items;
+using mxd.SQL2.Tools;
 
 #endregion
 
-namespace mxd.SQL2.Tools
+namespace mxd.SQL2.DataReaders
 {
 	public static class PAKReader
 	{

@@ -4,17 +4,20 @@ using System;
 using System.IO;
 using mxd.SQL2.Data;
 using mxd.SQL2.Items;
+using mxd.SQL2.Tools;
 
 #endregion
 
-namespace mxd.SQL2.Tools
+namespace mxd.SQL2.Games.Quake
 {
-	public static class Quake2BSPReader
+	// Quake BSP reader
+	public static class QuakeBSPReader
 	{
 		#region ================= Constants
 
-		private const string BSP_MAGIC = "IBSP";
-		private const int BSP_VERSION = 38;
+		private const int BSPVERSION = 29;
+		private const int BSP2VERSION_2PSB = (('B' << 24) | ('S' << 16) | ('P' << 8) | '2');
+		private const int BSP2VERSION_BSP2 = (('B' << 0) | ('S' << 8) | ('P' << 16) | ('2' << 24));
 
 		#endregion
 
@@ -24,19 +27,14 @@ namespace mxd.SQL2.Tools
 		{
 			long offset = reader.BaseStream.Position;
 
-			// Check header
-			string magic = reader.ReadString(4);
+			// Get version and offset to entities 
 			int version = reader.ReadInt32();
+			long entdatastart = reader.ReadInt32() + offset;
+			long entdataend = entdatastart + reader.ReadInt32();
 
-			if(magic != BSP_MAGIC || version != BSP_VERSION)
-				return new MapItem(name);
-
-			// Next is lump directory. We are interested in the first one
-
-			long entdatastart = reader.ReadUInt32() + offset;
-			long entdataend = entdatastart + reader.ReadUInt32();
-
-			if(entdatastart >= reader.BaseStream.Length || entdataend >= reader.BaseStream.Length)
+			// Time to bail out?
+			if((version != BSPVERSION && version != BSP2VERSION_BSP2 && version != BSP2VERSION_2PSB)
+				|| entdatastart >= reader.BaseStream.Length || entdataend >= reader.BaseStream.Length)
 				return new MapItem(name);
 
 			// Get entities data. Worldspawn should be the first entry
@@ -76,7 +74,7 @@ namespace mxd.SQL2.Tools
 					}
 
 					// Trim extra spaces...
-					if(!(prevchar == 32 && prevchar == b)) title += Quake2Font.CharMap[b];
+					if(!(prevchar == 32 && prevchar == b)) title += QuakeFont.CharMap[b];
 					prevchar = b;
 				}
 			}

@@ -7,7 +7,7 @@ using mxd.SQL2.Items;
 
 #endregion
 
-namespace mxd.SQL2.Tools
+namespace mxd.SQL2.Games.Quake
 {
 	public static class QuakeDemoReader
 	{

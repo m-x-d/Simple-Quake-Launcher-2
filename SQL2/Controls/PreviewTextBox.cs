@@ -239,24 +239,6 @@ namespace mxd.SQL2.Controls
 		{
 			var runs = GetSelectedRuns(this.Selection);
 
-			// Fix selection bleeding into the next non-editable run when double-clicking the last word of editable run...
-			if(runs.Count == 2)
-			{
-				var first = runs[0];
-				var second = runs[1];
-
-				if(first.IsEditable && !second.IsEditable && !string.IsNullOrEmpty(first.Text.Trim()))
-				{
-					if(second.ContentStart.GetOffsetToPosition(this.Selection.End) == 1 && second.Text.StartsWith(" "))
-					{
-						var selend = (first.Text.EndsWith(" ") ? first.ContentEnd.GetPositionAtOffset(-1) : first.ContentEnd);
-						this.Selection.Select(this.Selection.Start, selend);
-						this.IsReadOnly = false;
-						return;
-					}
-				}
-			}
-
 			// Prevent editing when non-editable runs are selected...
 			foreach(var run in runs)
 			{
