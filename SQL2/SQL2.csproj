@@ -64,6 +64,7 @@
     <Compile Include="Controls\PreviewRun.cs" />
     <Compile Include="Controls\PreviewTextBox.cs" />
     <Compile Include="Data\Quake2Font.cs" />
+    <Compile Include="Games\Hexen2\Hexen2Handler.cs" />
     <Compile Include="Games\Quake2\Quake2Handler.cs" />
     <Compile Include="Items\ClassItem.cs" />
     <Compile Include="Items\ItemType.cs" />
@@ -156,9 +157,7 @@
     <Resource Include="Resources\Desktop.png" />
     <Resource Include="Resources\Folder.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Games\Hexen2\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

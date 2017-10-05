@@ -77,7 +77,7 @@ namespace mxd.SQL2.Games
 		protected delegate bool PK3ContainsMapsDelegate(string modpath);
 
 		// Demo info retrieval
-		public delegate DemoItem GetDemoInfoDelegate(string demoname, BinaryReader reader);
+		protected delegate DemoItem GetDemoInfoDelegate(string demoname, BinaryReader reader);
 
 		// Demos gathering
 		protected delegate List<DemoItem> GetFolderDemosDelegate(string modpath, string demosfolder);
@@ -256,6 +256,12 @@ namespace mxd.SQL2.Games
 				case ItemType.MAP: return mapnames.ElementAt(App.Random.Next(0, mapnames.Count));
 				default: throw new Exception("GetRandomItem: unsupported ItemType!");
 			}
+		}
+
+		// Here mainly because of Hexen 2...
+		public virtual string CheckMapTitle(string title)
+		{
+			return title.Trim();
 		}
 
 		#endregion

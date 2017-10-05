@@ -327,13 +327,11 @@ namespace mxd.SQL2
 		// Enable/disable controls based on currently selected items
 		private void UpdateInterface()
 		{
-			// Disable map and skill dropdowns when a demo is selected...
+			// Disable map, skill and class dropdowns when a demo is selected...
 			var demo = GetCurrentDemo();
 			bool enable = (demo == null || demo.IsDefault);
-			maps.IsEnabled = enable;
-			labelmaps.IsEnabled = enable;
-			skills.IsEnabled = enable;
-			labelskills.IsEnabled = enable;
+			foreach(var c in new Control[]{ maps, labelmaps, skills, labelskills, classes, labelclasses })
+				c.IsEnabled = enable;
 
 			// Disable demo controls if no demos were found
 			bool havedemos = (demos.Items.Count > 0);

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using mxd.SQL2.DataReaders;
 using mxd.SQL2.Items;
-using mxd.SQL2.Tools;
 
 #endregion
 
@@ -20,13 +19,10 @@ namespace mxd.SQL2.Games.Quake
 
 		#region ================= Setup
 
-		// Valid Quake path if "id1\pak0.pak" and "id1\pak1.pak" exist, I guess...
+		// Valid Quake path if "id1\pak0.pak" exists, I guess...
 		protected override bool CanHandle(string gamepath)
 		{
-			foreach(var p in new[] { "id1\\pak0.pak", "id1\\pak1.pak" })
-				if(!File.Exists(Path.Combine(gamepath, p))) return false;
-
-			return true;
+			return File.Exists(Path.Combine(gamepath, "id1\\pak0.pak"));
 		}
 
 		// Data initialization order matters (horrible, I know...)!
@@ -40,6 +36,8 @@ namespace mxd.SQL2.Games.Quake
 
 			// Demo extensions
 			supporteddemoextensions.Add(".dem");
+			supporteddemoextensions.Add(".mvd"); // net Quake only?
+			supporteddemoextensions.Add(".qwd"); // net Quake only?
 
 			// Setup map delegates
 			getfoldermaps = DirectoryReader.GetMaps;
@@ -102,8 +100,7 @@ namespace mxd.SQL2.Games.Quake
 
 		private void GetMods(string path, ICollection<ModItem> result)
 		{
-			string[] folders = Directory.GetDirectories(path);
-			foreach(string folder in folders)
+			foreach(string folder in Directory.GetDirectories(path))
 			{
 				if(!Directory.Exists(folder)) continue;
 				

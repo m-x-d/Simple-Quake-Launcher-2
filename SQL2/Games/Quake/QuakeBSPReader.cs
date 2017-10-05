@@ -41,14 +41,14 @@ namespace mxd.SQL2.Games.Quake
 			reader.BaseStream.Position = entdatastart + 1; // Skip the first "{"
 			string data = reader.ReadString(' ');
 
-			while(!data.EndsWith("\"message\"", StringComparison.OrdinalIgnoreCase) && !data.Contains("}") && reader.BaseStream.Position < entdataend)
+			while(!IsMessage(data) && !data.Contains("}") && reader.BaseStream.Position < entdataend)
 			{
 				data = reader.ReadString(' ');
 			}
 
 			// Next quoted string is map name
 			string title = string.Empty;
-			if(data.EndsWith("\"message\"", StringComparison.OrdinalIgnoreCase))
+			if(IsMessage(data))
 			{
 				byte b = reader.ReadByte();
 
@@ -80,8 +80,13 @@ namespace mxd.SQL2.Games.Quake
 			}
 
 			// Return MapItem with title, if we have one
-			title = title.Trim();
+			title = GameHandler.Current.CheckMapTitle(title);
 			return (!string.IsNullOrEmpty(title) ? new MapItem(title, name) : new MapItem(name));
+		}
+
+		private static bool IsMessage(string data)
+		{
+			return data.EndsWith("\"message\"", StringComparison.OrdinalIgnoreCase) || data.EndsWith("\"netname\"", StringComparison.OrdinalIgnoreCase);
 		}
 
 		#endregion

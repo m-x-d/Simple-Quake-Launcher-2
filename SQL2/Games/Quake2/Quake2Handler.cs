@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.IO;
 using mxd.SQL2.DataReaders;
 using mxd.SQL2.Items;
-using mxd.SQL2.Tools;
 
 #endregion
 
@@ -13,7 +12,7 @@ namespace mxd.SQL2.Games.Quake2
 {
 	public class Quake2Handler : GameHandler
 	{
-		#region ================= Properties
+		#region ================= Variables
 
 		private Dictionary<string, string> knowngamefolders; // Folder names and titles for official expansions, <rogue, MP2: Ground Zero>
 

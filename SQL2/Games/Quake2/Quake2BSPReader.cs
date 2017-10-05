@@ -83,7 +83,7 @@ namespace mxd.SQL2.Games.Quake2
 			}
 
 			// Return MapItem with title, if we have one
-			title = title.Trim();
+			title = GameHandler.Current.CheckMapTitle(title);
 			return (!string.IsNullOrEmpty(title) ? new MapItem(title, name) : new MapItem(name));
 		}
 
