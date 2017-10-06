@@ -119,7 +119,8 @@ namespace mxd.SQL2.DataReaders
 						string entry = e.FullName;
 						
 						// Skip unrelated files...
-						if(!GameHandler.Current.SupportedDemoExtensions.Contains(Path.GetExtension(entry)))
+						string ext = Path.GetExtension(entry);
+						if(!GameHandler.Current.SupportedDemoExtensions.Contains(ext))
 							continue;
 
 						// If demosfolder is given, skip items not within said folder...
@@ -133,16 +134,24 @@ namespace mxd.SQL2.DataReaders
 							entry = entry.Substring(demosfolder.Length + 1);
 						}
 
-						using(var stream = e.Open())
+						if(GameHandler.Current.CanHandleDemoFormat(ext))
 						{
-							using(var copy = new MemoryStream())
+							using(var stream = e.Open())
 							{
-								stream.CopyTo(copy);
-								copy.Position = 0;
+								using(var copy = new MemoryStream())
+								{
+									stream.CopyTo(copy);
+									copy.Position = 0;
 
-								using(var reader = new BinaryReader(copy))
-									GameHandler.Current.AddDemoItem(entry, result, reader);
+									using(var reader = new BinaryReader(copy))
+										GameHandler.Current.AddDemoItem(entry, result, reader);
+								}
 							}
+						}
+						else
+						{
+							// Just add without trying to parse the data
+							GameHandler.Current.AddDemoItem(entry, result);
 						}
 					}
 				}

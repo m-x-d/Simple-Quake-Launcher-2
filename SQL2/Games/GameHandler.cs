@@ -125,37 +125,6 @@ namespace mxd.SQL2.Games
 
 		protected virtual void Setup(string gamepath) // c:\games\Quake
 		{
-#if DEBUG
-			CheckItems(basegames.Values.ToArray());
-			CheckItems(skills.ToArray());
-			CheckItems(classes.ToArray());
-
-			SkillItem defaultskill = null;
-			foreach(var skill in skills)
-			{
-				skillnames.Add(skill.Value);
-				if(skill.IsDefault)
-				{
-					defaultskill = skill;
-					break;
-				}
-			}
-
-			ClassItem defaultclass = null;
-			foreach(var pclass in classes)
-			{
-				classnames.Add(pclass.Value);
-				if(pclass.IsDefault)
-				{
-					defaultclass = pclass;
-					break;
-				}
-			}
-
-			if(skills.Count > 0 && defaultskill == null) throw new InvalidDataException("No default skill specified!");
-			if(classes.Count > 0 && defaultclass == null) throw new InvalidDataException("No default class specified!");
-#endif
-
 			// Add random skill and class
 			if(skills.Count > 1) skills.Insert(0, SkillItem.Random);
 			if(skills.Count > 0) skills.Insert(0, SkillItem.Default);
@@ -282,6 +251,11 @@ namespace mxd.SQL2.Games
 			return false;
 		}
 
+		public virtual bool CanHandleDemoFormat(string ext)
+		{
+			return true;
+		}
+
 		public virtual void AddDemoItem(string relativedemopath, List<DemoItem> demos, BinaryReader reader)
 		{
 			relativedemopath = relativedemopath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
@@ -301,27 +275,13 @@ namespace mxd.SQL2.Games
 			}
 		}
 
-		// Debug checks...
-#if DEBUG
-		private static void CheckItems(ICollection<AbstractItem> items)
+		public virtual void AddDemoItem(string relativedemopath, List<DemoItem> demos)
 		{
-			if(items.Count == 0) return;
-
-			bool founddefault = false;
-			foreach(var item in items)
-			{
-				if(item.IsDefault)
-				{
-					if(founddefault) throw new InvalidDataException("Multiple default items!");
-					founddefault = true;
-				}
-			}
-
-			if(!founddefault) throw new InvalidDataException("No default items!");
+			relativedemopath = relativedemopath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+			demos.Add(new DemoItem(relativedemopath, "Unsupported demo format", false));
 		}
-#endif
 
-#endregion
+		#endregion
 
 		#region ================= Instancing
 

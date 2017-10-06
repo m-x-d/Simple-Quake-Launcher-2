@@ -70,16 +70,17 @@ namespace mxd.SQL2.DataReaders
 				// Try to get data from demo files...
 				foreach(string file in Directory.GetFiles(modpath, "*" + ext, SearchOption.AllDirectories))
 				{
-					using(var stream = File.OpenRead(file))
+					string relativedemopath = file.Substring(modpath.Length + 1);
+					if(GameHandler.Current.CanHandleDemoFormat(ext))
 					{
-						if(stream.Length > 67)
-						{
+						using(var stream = File.OpenRead(file))
 							using(var br = new BinaryReader(stream, Encoding.ASCII))
-							{
-								string relativedemopath = file.Substring(modpath.Length + 1);
 								GameHandler.Current.AddDemoItem(relativedemopath, result, br);
-							}
-						}
+					}
+					else
+					{
+						// Just add without trying to parse the data
+						GameHandler.Current.AddDemoItem(relativedemopath, result);
 					}
 				}
 			}

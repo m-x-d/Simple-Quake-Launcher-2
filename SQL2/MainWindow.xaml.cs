@@ -35,7 +35,8 @@ namespace mxd.SQL2
 
 		#region ================= Variables
 
-		private Point storedlocation;
+		private int windowx;
+		private int windowy;
 		private bool enginelaunched;
 		private bool blockupdate;
 		private List<ModItem> allmods;
@@ -492,8 +493,12 @@ namespace mxd.SQL2
 				return;
 			}
 
+			// Don't mess with window position when launching in windowed mode
+			var res = (ResolutionItem)lp[ItemType.RESOLUTION];
+			windowx = (res.IsDefault ? (int)this.Left : int.MaxValue);
+			windowy = (res.IsDefault ? (int)this.Top : int.MaxValue);
+
 			// Proceed with launch
-			storedlocation = new Point(this.Left, this.Top);
 			enginelaunched = true;
 
 #if DEBUG
@@ -641,11 +646,13 @@ namespace mxd.SQL2
 		// Restore window location (fitzquake messes this up when launching in fullscreen)
 		private void ProcessOnExited(object sender, EventArgs e)
 		{
+			if(windowx == int.MaxValue || windowy == int.MaxValue) return;
+			
 			// Cross-thread call required...
 			this.Dispatcher.Invoke(() =>
 			{
-				this.Left = storedlocation.X;
-				this.Top = storedlocation.Y;
+				this.Left = windowx;
+				this.Top = windowy;
 			});
 		}
 

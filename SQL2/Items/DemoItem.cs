@@ -48,9 +48,9 @@ namespace mxd.SQL2.Items
 			this.maptitle = maptitle;
 		}
 
-		public DemoItem(string filename, string message) : base(filename + " | " + message, filename)
+		public DemoItem(string filename, string message, bool isinvalid = true) : base((string.IsNullOrEmpty(message) ? filename : filename + " | " + message), filename)
 		{
-			this.isinvalid = true;
+			this.isinvalid = isinvalid;
 			this.maptitle = Path.GetFileName(filename);
 		}
 

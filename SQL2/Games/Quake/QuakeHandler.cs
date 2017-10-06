@@ -1,5 +1,6 @@
 ﻿#region ================= Namespaces
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using mxd.SQL2.DataReaders;
@@ -89,7 +90,7 @@ namespace mxd.SQL2.Games.Quake
 
 		#endregion
 
-		#region ================= Get mods
+		#region ================= Methods
 
 		public override List<ModItem> GetMods()
 		{
@@ -120,6 +121,11 @@ namespace mxd.SQL2.Games.Quake
 
 				result.Add(new ModItem(name, folder));
 			}
+		}
+
+		public override bool CanHandleDemoFormat(string ext)
+		{
+			return string.Compare(ext, ".dem", StringComparison.OrdinalIgnoreCase) == 0;
 		}
 
 		#endregion
