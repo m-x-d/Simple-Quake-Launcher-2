@@ -27,21 +27,30 @@ namespace mxd.SQL2.DataReaders
 					foreach(var entry in arc.Entries)
 					{
 						if(!GameHandler.Current.EntryIsMap(entry.FullName, mapslist)) continue;
-
 						string mapname = Path.GetFileNameWithoutExtension(entry.Name);
-						using(var stream = entry.Open())
-						{
-							using(var copy = new MemoryStream())
-							{
-								stream.CopyTo(copy);
-								copy.Position = 0;
+						MapItem mapitem;
 
-								using(var reader = new BinaryReader(copy))
+						if(getmapinfo != null)
+						{
+							using(var stream = entry.Open())
+							{
+								using(var copy = new MemoryStream())
 								{
-									mapslist.Add(mapname, getmapinfo(mapname, reader));
+									stream.CopyTo(copy);
+									copy.Position = 0;
+
+									using(var reader = new BinaryReader(copy))
+										mapitem = getmapinfo(mapname, reader);
 								}
 							}
 						}
+						else
+						{
+							mapitem = new MapItem(mapname);
+						}
+
+						// Add to collection
+						mapslist.Add(mapname, mapitem);
 					}
 				}
 			}
@@ -59,14 +68,14 @@ namespace mxd.SQL2.DataReaders
 					using(BinaryReader reader = new BinaryReader(stream, Encoding.ASCII))
 					{
 						// Traverse file entries
-						while(reader.ReadString(4) == "PK\x03\x04")
+						while(reader.ReadStringExactLength(4) == "PK\x03\x04")
 						{
 							reader.BaseStream.Position += 14;
 							int compressedsize = reader.ReadInt32();
 							reader.BaseStream.Position += 4;
 							short filenamelength = reader.ReadInt16();
 							short extralength = reader.ReadInt16();
-							string entry = reader.ReadString(filenamelength);
+							string entry = reader.ReadStringExactLength(filenamelength);
 
 							if(Path.GetDirectoryName(entry.ToLower()) == "maps" && Path.GetExtension(entry).ToLower() == ".bsp")
 							{
@@ -134,24 +143,16 @@ namespace mxd.SQL2.DataReaders
 							entry = entry.Substring(demosfolder.Length + 1);
 						}
 
-						if(GameHandler.Current.CanHandleDemoFormat(ext))
+						using(var stream = e.Open())
 						{
-							using(var stream = e.Open())
+							using(var copy = new MemoryStream())
 							{
-								using(var copy = new MemoryStream())
-								{
-									stream.CopyTo(copy);
-									copy.Position = 0;
+								stream.CopyTo(copy);
+								copy.Position = 0;
 
-									using(var reader = new BinaryReader(copy))
-										GameHandler.Current.AddDemoItem(entry, result, reader);
-								}
+								using(var reader = new BinaryReader(copy))
+									GameHandler.Current.AddDemoItem(entry, result, reader);
 							}
-						}
-						else
-						{
-							// Just add without trying to parse the data
-							GameHandler.Current.AddDemoItem(entry, result);
 						}
 					}
 				}

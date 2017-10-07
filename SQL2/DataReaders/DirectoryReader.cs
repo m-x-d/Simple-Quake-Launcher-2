@@ -25,10 +25,21 @@ namespace mxd.SQL2.DataReaders
 			{
 				if(!GameHandler.Current.EntryIsMap(file, mapslist)) continue;
 				string mapname = Path.GetFileNameWithoutExtension(file);
+				MapItem mapitem;
 
-				using(FileStream stream = File.OpenRead(file))
-					using(BinaryReader reader = new BinaryReader(stream, Encoding.ASCII))
-						mapslist.Add(mapname, getmapinfo(mapname, reader));
+				if(getmapinfo != null)
+				{
+					using(FileStream stream = File.OpenRead(file))
+						using(BinaryReader reader = new BinaryReader(stream, Encoding.ASCII))
+							mapitem = getmapinfo(mapname, reader);
+				}
+				else
+				{
+					mapitem = new MapItem(mapname);
+				}
+
+				// Add to collection
+				mapslist.Add(mapname, mapitem);
 			}
 		}
 
@@ -71,17 +82,10 @@ namespace mxd.SQL2.DataReaders
 				foreach(string file in Directory.GetFiles(modpath, "*" + ext, SearchOption.AllDirectories))
 				{
 					string relativedemopath = file.Substring(modpath.Length + 1);
-					if(GameHandler.Current.CanHandleDemoFormat(ext))
-					{
-						using(var stream = File.OpenRead(file))
-							using(var br = new BinaryReader(stream, Encoding.ASCII))
-								GameHandler.Current.AddDemoItem(relativedemopath, result, br);
-					}
-					else
-					{
-						// Just add without trying to parse the data
-						GameHandler.Current.AddDemoItem(relativedemopath, result);
-					}
+
+					using(var stream = File.OpenRead(file))
+						using(var br = new BinaryReader(stream, Encoding.ASCII))
+							GameHandler.Current.AddDemoItem(relativedemopath, result, br);
 				}
 			}
 

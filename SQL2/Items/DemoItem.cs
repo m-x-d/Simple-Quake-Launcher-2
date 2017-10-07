@@ -16,6 +16,7 @@ namespace mxd.SQL2.Items
 
 		#region ================= Variables
 
+		private readonly string modname; // Stored only on QWD demos, so can be empty...
 		private readonly string mapfilepath;
 		private readonly string maptitle;
 		private readonly bool isinvalid;
@@ -26,6 +27,7 @@ namespace mxd.SQL2.Items
 
 		// Value: demos\somedemo.dem
 		// Title: demos\somedemo.dem | map: Benis Devastation
+		public string ModName => modname; // xatrix / id1 etc.
 		public string MapFilePath => mapfilepath; // maps/somemap.bsp
 		public string MapTitle => maptitle; // Benis Devastation
 		public bool IsInvalid => isinvalid;
@@ -42,8 +44,18 @@ namespace mxd.SQL2.Items
 			this.maptitle = name;
 		}
 
+		// "demos\dm3_demo.dem", "maps\dm3.bsp", "Whatever Title DM3 Has"
 		public DemoItem(string filename, string mapfilepath, string maptitle) : base(filename + " | map: " + maptitle, filename)
 		{
+			this.modname = string.Empty;
+			this.mapfilepath = mapfilepath;
+			this.maptitle = maptitle;
+		}
+
+		// "qw", "demos\dm3_demo.dem", "maps\dm3.bsp", "Whatever Title DM3 Has"
+		public DemoItem(string modname, string filename, string mapfilepath, string maptitle) : base(filename + " | map: " + maptitle, filename)
+		{
+			this.modname = modname;
 			this.mapfilepath = mapfilepath;
 			this.maptitle = maptitle;
 		}

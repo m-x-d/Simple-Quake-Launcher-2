@@ -26,12 +26,15 @@ namespace mxd.SQL2.Games.Quake2
 
 		#region ================= GetDemoInfo
 
+		// https://www.quakewiki.net/archives/demospecs/dm2/dm2.html
 		public static DemoItem GetDemoInfo(string demoname, BinaryReader reader)
 		{
 			// uint blocklength
 			// SERVERINFO
 			// CONFIGSTRINGS, one of them is .bsp path
 
+			int blocklength = reader.ReadInt32();
+			if(reader.BaseStream.Position + blocklength >= reader.BaseStream.Length) return null;
 			long blockend = reader.ReadUInt32() + reader.BaseStream.Position;
 
 			int messagetype = reader.ReadByte();
@@ -44,7 +47,7 @@ namespace mxd.SQL2.Games.Quake2
 			if(reader.ReadByte() != 1) return null; // Not a RECORD_CLIENT demo...
 			string gamedir = reader.ReadString('\0'); // Game directory (may be empty, which means "baseq2").
 			int playernum = reader.ReadInt16();
-			string maptitle = ReadMapTitle(reader, blockend);
+			string maptitle = reader.ReadMapTitle(blocklength, Quake2Font.CharMap);
 
 			// Read configstrings
 			string mapfilepath = string.Empty;
@@ -66,6 +69,7 @@ namespace mxd.SQL2.Games.Quake2
 				if(reader.BaseStream.Position == blockend)
 				{
 					blockend = reader.ReadUInt32() + reader.BaseStream.Position;
+					if(blockend >= reader.BaseStream.Length) return null;
 				}
 			}
 
@@ -74,34 +78,6 @@ namespace mxd.SQL2.Games.Quake2
 
 			// No dice...
 			return null;
-		}
-
-		private static string ReadMapTitle(BinaryReader reader, long maxoffset)
-		{
-			string result = string.Empty;
-
-			byte prevchar = 0;
-			while(reader.BaseStream.Position < maxoffset)
-			{
-				var b = reader.ReadByte();
-
-				// Stop on null char
-				if(b == 0) break;
-
-				// Replace newline with space
-				if(b == 'n' && prevchar == '\\')
-				{
-					prevchar = b;
-					result = result.Remove(result.Length - 1, 1) + ' ';
-					continue;
-				}
-
-				// Trim extra spaces...
-				if(!(prevchar == 32 && prevchar == b)) result += Quake2Font.CharMap[b];
-				prevchar = b;
-			}
-
-			return result;
 		}
 
 		#endregion

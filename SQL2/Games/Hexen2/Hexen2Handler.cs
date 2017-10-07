@@ -64,7 +64,7 @@ namespace mxd.SQL2.Games.Hexen2
 			getpakdemos = PAKReader.GetDemos;
 			getpk3demos = PK3Reader.GetDemos;
 
-			getdemoinfo = QuakeDemoReader.GetDemoInfo;
+			getdemoinfo = Hexen2DemoReader.GetDemoInfo;
 
 			// Setup launch params
 			launchparams[ItemType.ENGINE] = string.Empty;

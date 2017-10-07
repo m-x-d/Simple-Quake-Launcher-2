@@ -26,7 +26,7 @@ namespace mxd.SQL2.DataReaders
 					using(BinaryReader reader = new BinaryReader(stream, Encoding.ASCII))
 					{
 						// Read header
-						string id = reader.ReadString(4);
+						string id = reader.ReadStringExactLength(4);
 						if(id != "PACK") continue;
 
 						int ftoffset = reader.ReadInt32();
@@ -36,22 +36,33 @@ namespace mxd.SQL2.DataReaders
 						reader.BaseStream.Position = ftoffset;
 						for(int i = 0; i < ftsize; i++)
 						{
-							string entry = reader.ReadString(56).Trim(); // Read entry name
+							string entry = reader.ReadStringExactLength(56).Trim(); // Read entry name
 							int offset = reader.ReadInt32();
 							reader.BaseStream.Position += 4; //skip unrelated stuff
 
 							if(!GameHandler.Current.EntryIsMap(entry, mapslist)) continue;
 							string mapname = Path.GetFileNameWithoutExtension(entry);
+							MapItem mapitem;
 
-							// Store position
-							long curpos = reader.BaseStream.Position;
+							if(getmapinfo != null)
+							{
+								// Store position
+								long curpos = reader.BaseStream.Position;
 
-							// Go to data location
-							reader.BaseStream.Position = offset;
-							mapslist.Add(mapname, getmapinfo(mapname, reader));
+								// Go to data location
+								reader.BaseStream.Position = offset;
+								mapitem = getmapinfo(mapname, reader);
+								
+								// Restore position
+								reader.BaseStream.Position = curpos;
+							}
+							else
+							{
+								mapitem = new MapItem(mapname);
+							}
 
-							// Restore position
-							reader.BaseStream.Position = curpos;
+							// Add to collection
+							mapslist.Add(mapname, mapitem);
 						}
 					}
 				}
@@ -69,7 +80,7 @@ namespace mxd.SQL2.DataReaders
 					using(BinaryReader reader = new BinaryReader(stream, Encoding.ASCII))
 					{
 						// Read header
-						string id = reader.ReadString(4);
+						string id = reader.ReadStringExactLength(4);
 						if(id != "PACK") continue;
 
 						int ftoffset = reader.ReadInt32();
@@ -79,7 +90,7 @@ namespace mxd.SQL2.DataReaders
 						reader.BaseStream.Position = ftoffset;
 						for(int i = 0; i < ftsize; i++)
 						{
-							string entry = reader.ReadString(56).Trim(); // Read entry name
+							string entry = reader.ReadStringExactLength(56).Trim(); // Read entry name
 							reader.BaseStream.Position += 8; // Skip unrelated stuff
 
 							if(Path.GetDirectoryName(entry.ToLower()) == "maps" && Path.GetExtension(entry).ToLower() == ".bsp")
@@ -113,7 +124,7 @@ namespace mxd.SQL2.DataReaders
 					using(BinaryReader reader = new BinaryReader(stream, Encoding.ASCII))
 					{
 						// Read header
-						string id = reader.ReadString(4);
+						string id = reader.ReadStringExactLength(4);
 						if(id != "PACK") continue;
 
 						int ftoffset = reader.ReadInt32();
@@ -123,7 +134,7 @@ namespace mxd.SQL2.DataReaders
 						reader.BaseStream.Position = ftoffset;
 						for(int i = 0; i < ftsize; i++)
 						{
-							string entry = reader.ReadString(56).Trim(); // Read entry name
+							string entry = reader.ReadStringExactLength(56).Trim(); // Read entry name
 							int offset = reader.ReadInt32();
 							reader.BaseStream.Position += 4; //skip unrelated stuff
 
@@ -142,25 +153,17 @@ namespace mxd.SQL2.DataReaders
 								entry = entry.Substring(demosfolder.Length + 1);
 							}
 
-							if(GameHandler.Current.CanHandleDemoFormat(ext))
-							{
-								// Store position
-								long curpos = reader.BaseStream.Position;
+							// Store position
+							long curpos = reader.BaseStream.Position;
 
-								// Go to data location
-								reader.BaseStream.Position = offset;
+							// Go to data location
+							reader.BaseStream.Position = offset;
 
-								// Add demo data
-								GameHandler.Current.AddDemoItem(entry, result, reader);
+							// Add demo data
+							GameHandler.Current.AddDemoItem(entry, result, reader);
 
-								// Restore position
-								reader.BaseStream.Position = curpos;
-							}
-							else
-							{
-								// Just add without trying to parse the data
-								GameHandler.Current.AddDemoItem(entry, result);
-							}
+							// Restore position
+							reader.BaseStream.Position = curpos;
 						}
 					}
 				}

@@ -26,7 +26,7 @@ namespace mxd.SQL2.Games.Quake2
 			long offset = reader.BaseStream.Position;
 
 			// Check header
-			string magic = reader.ReadString(4);
+			string magic = reader.ReadStringExactLength(4);
 			int version = reader.ReadInt32();
 
 			if(magic != BSP_MAGIC || version != BSP_VERSION)

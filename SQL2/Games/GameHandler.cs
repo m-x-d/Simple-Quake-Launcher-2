@@ -22,6 +22,7 @@ namespace mxd.SQL2.Games
 
 		protected string defaultmodpath; // id1 / baseq2 / data1 etc.
 		protected string gamepath; // c:\games\Quake, c:\games\Quake2 etc.
+		protected string modname; // xatrix / Arcane Dimensions / yoursupermod etc.
 		protected string ignoredmapprefix; // map filenames starting with this will be ignored
 		protected HashSet<string> supporteddemoextensions; // .dem, .mvd, .qvd etc.
 		protected Dictionary<string, GameItem> basegames; // Quake-specific game flags; <folder name, BaseGameItem>
@@ -29,6 +30,7 @@ namespace mxd.SQL2.Games
 		protected List<ClassItem> classes; // Cleric, Paladin, Necromancer [default], Assassin, Demoness [Hexen 2 only]
 
 		private HashSet<string> mapnames;
+		private HashSet<string> defaultmapnames; // Maps from defaultmodpath. Needed to properly check demos MapPath data... 
 		private List<string> skillnames;
 		private List<string> classnames; // [Hexen 2 only]
 
@@ -125,6 +127,8 @@ namespace mxd.SQL2.Games
 
 		protected virtual void Setup(string gamepath) // c:\games\Quake
 		{
+			this.gamepath = gamepath;
+
 			// Add random skill and class
 			if(skills.Count > 1) skills.Insert(0, SkillItem.Random);
 			if(skills.Count > 0) skills.Insert(0, SkillItem.Default);
@@ -132,7 +136,16 @@ namespace mxd.SQL2.Games
 			if(classes.Count > 1) classes.Insert(0, ClassItem.Random);
 			if(classes.Count > 0) classes.Insert(0, ClassItem.Default);
 
-			this.gamepath = gamepath;
+			// Store maps from default mod...
+			var maplist = new Dictionary<string, MapItem>(StringComparer.OrdinalIgnoreCase);
+
+			// Get maps from all supported sources
+			if(getfoldermaps != null) getfoldermaps(defaultmodpath, maplist, null);
+			if(getpakmaps != null) getpakmaps(defaultmodpath, maplist, null);
+			if(getpk3maps != null) getpk3maps(defaultmodpath, maplist, null);
+
+			// Store map names...
+			defaultmapnames = new HashSet<string>(maplist.Keys, StringComparer.OrdinalIgnoreCase);
 		}
 
 		#endregion
@@ -177,6 +190,7 @@ namespace mxd.SQL2.Games
 
 		public virtual List<MapItem> GetMaps(string modpath) // c:\Quake\MyMod
 		{
+			modname = modpath.Substring(gamepath.Length + 1);
 			if(!Directory.Exists(modpath)) return new List<MapItem>();
 			Dictionary<string, MapItem> maplist = new Dictionary<string, MapItem>(StringComparer.OrdinalIgnoreCase);
 
@@ -187,6 +201,7 @@ namespace mxd.SQL2.Games
 
 			// Store map names...
 			mapnames = new HashSet<string>(maplist.Keys, StringComparer.OrdinalIgnoreCase);
+			mapnames.UnionWith(defaultmapnames); // Add default maps...
 
 			// Sort and return the List
 			List<MapItem> mapitems = new List<MapItem>(maplist.Values.Count);
@@ -251,20 +266,18 @@ namespace mxd.SQL2.Games
 			return false;
 		}
 
-		public virtual bool CanHandleDemoFormat(string ext)
-		{
-			return true;
-		}
-
 		public virtual void AddDemoItem(string relativedemopath, List<DemoItem> demos, BinaryReader reader)
 		{
 			relativedemopath = relativedemopath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
 			DemoItem di = getdemoinfo(relativedemopath, reader);
 			if(di != null)
 			{
-				// Check if we have a matching map...
-				if(!mapnames.Contains(Path.GetFileNameWithoutExtension(di.MapFilePath)))
+				if(di.IsInvalid)
+					demos.Add(di);
+				else if(!mapnames.Contains(Path.GetFileNameWithoutExtension(di.MapFilePath))) // Check if we have a matching map...
 					demos.Add(new DemoItem(relativedemopath, "Missing map file: '" + di.MapFilePath + "'")); // Add anyway, but with a warning...
+				else if(!string.IsNullOrEmpty(di.ModName) && string.Compare(modname, di.ModName, StringComparison.OrdinalIgnoreCase) != 0)
+					demos.Add(new DemoItem(relativedemopath, "Incorrect location: expected to be in '" + di.ModName + "' folder")); // Add anyway, but with a warning...
 				else
 					demos.Add(di);
 			}
@@ -273,12 +286,6 @@ namespace mxd.SQL2.Games
 				// Add anyway, I guess...
 				demos.Add(new DemoItem(relativedemopath, "Unknown demo format"));
 			}
-		}
-
-		public virtual void AddDemoItem(string relativedemopath, List<DemoItem> demos)
-		{
-			relativedemopath = relativedemopath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-			demos.Add(new DemoItem(relativedemopath, "Unsupported demo format", false));
 		}
 
 		#endregion
