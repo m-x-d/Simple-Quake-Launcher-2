@@ -128,8 +128,7 @@ namespace mxd.SQL2.DataReaders
 						string entry = e.FullName;
 						
 						// Skip unrelated files...
-						string ext = Path.GetExtension(entry);
-						if(!GameHandler.Current.SupportedDemoExtensions.Contains(ext))
+						if(!GameHandler.Current.SupportedDemoExtensions.Contains(Path.GetExtension(entry)))
 							continue;
 
 						// If demosfolder is given, skip items not within said folder...

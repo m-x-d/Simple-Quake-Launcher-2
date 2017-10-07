@@ -139,8 +139,7 @@ namespace mxd.SQL2.DataReaders
 							reader.BaseStream.Position += 4; //skip unrelated stuff
 
 							// Skip unrelated files...
-							string ext = Path.GetExtension(entry);
-							if(!GameHandler.Current.SupportedDemoExtensions.Contains(ext))
+							if(!GameHandler.Current.SupportedDemoExtensions.Contains(Path.GetExtension(entry)))
 								continue;
 
 							if(!string.IsNullOrEmpty(demosfolder))

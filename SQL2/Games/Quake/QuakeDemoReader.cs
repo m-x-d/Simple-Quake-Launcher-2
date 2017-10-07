@@ -155,7 +155,7 @@ namespace mxd.SQL2.Games.Quake
 						// long serverversion; // the protocol version coming from the server.
 						// long age; // the number of levels analysed since the existence of the server process. Starts with 1.
 						// char* game; // the QuakeWorld game directory. It has usually the value "qw";
-						// long client; // the client id.
+						// byte client; // the client id.
 						// char* mapname; // the name of the level.
 						// 10 unrelated floats
 
@@ -213,10 +213,94 @@ namespace mxd.SQL2.Games.Quake
 			return (alldatafound ? new DemoItem(game, demoname, mapfilepath, maptitle) : null);
 		}
 
-		//TODO
+		//TODO: Hacked in, needs more testing or proper format spec...
 		private static DemoItem GetMVDInfo(string demoname, BinaryReader reader)
 		{
-			return new DemoItem(demoname, "Unsupported demo format");
+			string game = string.Empty;
+			string maptitle = string.Empty;
+			string mapfilepath = string.Empty;
+			int protocol = 0;
+			bool alldatafound = false;
+
+			// Read blocks...
+			while(reader.BaseStream.Position < reader.BaseStream.Length)
+			{
+				if(alldatafound) break;
+
+				// Read block header...
+				reader.BaseStream.Position += 2; // Skip ??? (0x00 0x01 or 0x00 0x06)
+				int blocklength = reader.ReadInt32();
+				long blockend = reader.BaseStream.Position + blocklength;
+				if(blockend >= reader.BaseStream.Length) return null;
+
+				while(reader.BaseStream.Position < blockend)
+				{
+					if(alldatafound) break;
+
+					// Read messages...
+					int message = reader.ReadByte();
+					switch(message)
+					{
+						// SVC_SERVERINFO
+						// long serverversion; // the protocol version coming from the server.
+						// long age; // the number of levels analysed since the existence of the server process. Starts with 1.
+						// char* game; // the QuakeWorld game directory. It has usually the value "qw";
+						// long client; // the client id.
+						// char* mapname; // the name of the level.
+						// 10 unrelated floats
+
+						case SVC_SERVERINFO:
+							protocol = reader.ReadInt32();
+							if(!ProtocolsQW.Contains(protocol)) return null;
+							reader.BaseStream.Position += 4; // Skip age
+							game = reader.ReadString('\0');
+							reader.BaseStream.Position += 4; // Skip ???
+							maptitle = reader.ReadMapTitle(blocklength, QuakeFont.CharMap); // Map title can contain bogus chars...
+							if(protocol > 24) reader.BaseStream.Position += 40; // Skip 10 floats...
+							break;
+
+						case SVC_CDTRACK:
+							reader.BaseStream.Position += 1; // Skip CD track number
+							break;
+
+						case SVC_STUFFTEXT:
+							reader.SkipString(2048);
+							break;
+
+						case SVC_MODELLIST: // First model should be the map name
+							if(protocol > 25) reader.BaseStream.Position += 1; // Skip first model index...
+							for(int i = 0; i < 256; i++)
+							{
+								string mdlname = reader.ReadString('\0');
+								if(string.IsNullOrEmpty(mdlname)) break;
+								if(mdlname.EndsWith(".bsp", StringComparison.OrdinalIgnoreCase))
+								{
+									mapfilepath = mdlname;
+									alldatafound = true;
+									break;
+								}
+							}
+							if(protocol > 25) reader.BaseStream.Position += 1; // Skip next model index...
+							break;
+
+						case SVC_SOUNDLIST:
+							if(protocol > 25) reader.BaseStream.Position += 1; // Skip first sound index...
+							for(int i = 0; i < 256; i++)
+							{
+								string sndname = reader.ReadString('\0');
+								if(string.IsNullOrEmpty(sndname)) break;
+							}
+							if(protocol > 25) reader.BaseStream.Position += 1; // Skip next sound index...
+							break;
+
+						default:
+							return null;
+					}
+				}
+			}
+
+			// Done
+			return (alldatafound ? new DemoItem(game, demoname, mapfilepath, maptitle) : null);
 		}
 
 		#endregion

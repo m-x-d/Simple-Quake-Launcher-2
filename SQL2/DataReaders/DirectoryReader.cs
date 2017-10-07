@@ -1,5 +1,6 @@
 ﻿#region ================= Namespaces
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -81,6 +82,8 @@ namespace mxd.SQL2.DataReaders
 				// Try to get data from demo files...
 				foreach(string file in Directory.GetFiles(modpath, "*" + ext, SearchOption.AllDirectories))
 				{
+					if(!file.EndsWith(ext, StringComparison.OrdinalIgnoreCase)) continue; // A searchPattern with a file extension (for example *.txt) of exactly three characters returns files 
+																						  // having an extension of three or more characters, where the first three characters match the file extension specified in the searchPattern.
 					string relativedemopath = file.Substring(modpath.Length + 1);
 
 					using(var stream = File.OpenRead(file))
