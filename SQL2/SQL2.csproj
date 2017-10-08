@@ -64,6 +64,8 @@
     <Compile Include="Controls\PreviewRun.cs" />
     <Compile Include="Controls\PreviewTextBox.cs" />
     <Compile Include="Data\Quake2Font.cs" />
+    <Compile Include="Games\HalfLife\HalfLifeDemoReader.cs" />
+    <Compile Include="Games\HalfLife\HalfLifeHandler.cs" />
     <Compile Include="Games\Hexen2\Hexen2DemoReader.cs" />
     <Compile Include="Games\Hexen2\Hexen2Handler.cs" />
     <Compile Include="Games\Quake2\Quake2Handler.cs" />

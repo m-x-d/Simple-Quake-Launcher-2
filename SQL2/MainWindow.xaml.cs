@@ -646,13 +646,19 @@ namespace mxd.SQL2
 		// Restore window location (fitzquake messes this up when launching in fullscreen)
 		private void ProcessOnExited(object sender, EventArgs e)
 		{
-			if(windowx == int.MaxValue || windowy == int.MaxValue) return;
-			
 			// Cross-thread call required...
 			this.Dispatcher.Invoke(() =>
 			{
-				this.Left = windowx;
-				this.Top = windowy;
+				// Demo may've been recorded
+				UpdateDemosList();
+				UpdateInterface();
+
+				// Restore window position?
+				if(windowx != int.MaxValue && windowy != int.MaxValue)
+				{
+					this.Left = windowx;
+					this.Top = windowy;
+				}
 			});
 		}
 

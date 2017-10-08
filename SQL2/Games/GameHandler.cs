@@ -216,7 +216,7 @@ namespace mxd.SQL2.Games
 			var result = new List<EngineItem>();
 			foreach(string engine in enginenames)
 			{
-				if(Path.GetFileNameWithoutExtension(engine) == App.AppName) continue; // We is not engine. We is cat!
+				if(!IsEngine(Path.GetFileName(engine))) continue;
 
 				ImageSource img = null;
 				using(var i = Icon.ExtractAssociatedIcon(engine))
@@ -286,6 +286,14 @@ namespace mxd.SQL2.Games
 				// Add anyway, I guess...
 				demos.Add(new DemoItem(relativedemopath, "Unknown demo format"));
 			}
+		}
+
+		protected virtual bool IsEngine(string filename)
+		{
+			return (filename.EndsWith(".exe", StringComparison.OrdinalIgnoreCase)
+				&& Path.GetFileNameWithoutExtension(filename) != App.AppName 
+				&& !filename.StartsWith("unins", StringComparison.OrdinalIgnoreCase) 
+				&& !filename.StartsWith("unwise", StringComparison.OrdinalIgnoreCase));
 		}
 
 		#endregion
