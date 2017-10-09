@@ -3,10 +3,19 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:local="clr-namespace:mxd.SQL2"
 		xmlns:controls="clr-namespace:mxd.SQL2.Controls"
 		mc:Ignorable="d"
 		Title="Simple Quake Launcher" Height="446" Width="302" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen" SnapsToDevicePixels="True" Loaded="MainWindow_Loaded" Activated="MainWindow_Activated" Deactivated="MainWindow_Deactivated" Closing="MainWindow_Closing" SizeToContent="Height">
+	<Window.Resources>
+		<DataTemplate x:Key="coloreditemtemplate">
+			<TextBlock x:Name="content" Text="{Binding Title}" Foreground="{Binding Foreground}"/>
+			<DataTemplate.Triggers>
+				<DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=ComboBox}, Path=IsEnabled}" Value="False">
+					<Setter TargetName="content" Property="Foreground" Value="{x:Static SystemColors.InactiveCaptionTextBrush}" />
+				</DataTrigger>
+			</DataTemplate.Triggers>
+		</DataTemplate>
+	</Window.Resources>
 	<Grid Margin="0">
 		<Grid.Background>
 			<SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}"/>
@@ -40,13 +49,7 @@
 						</DataTemplate>
 					</ComboBox.ItemTemplate>
 				</ComboBox>
-				<ComboBox x:Name="resolutions" Margin="5,2,0,2" IsReadOnly="True" Height="24" SelectionChanged="resolutions_SelectionChanged" Grid.Column="1" Grid.Row="1" VerticalAlignment="Top">
-					<ComboBox.ItemTemplate>
-						<DataTemplate>
-							<TextBlock Text="{Binding Title}" Foreground="{Binding Foreground}"/>
-						</DataTemplate>
-					</ComboBox.ItemTemplate>
-				</ComboBox>
+				<ComboBox x:Name="resolutions" ItemTemplate="{StaticResource coloreditemtemplate}" Margin="5,2,0,2" IsReadOnly="True" Height="24" SelectionChanged="resolutions_SelectionChanged" Grid.Column="1" Grid.Row="1" VerticalAlignment="Top"/>
 			</Grid>
 		</GroupBox>
 		<GroupBox x:Name="groupgamesettings" Header=" Game Settings: " Margin="6,2" Grid.Row="1">
@@ -65,52 +68,16 @@
 				</Grid.RowDefinitions>
 				<Label x:Name="labelgames" Content="Game:" Margin="0" HorizontalContentAlignment="Right" HorizontalAlignment="Right"/>
 				<Label x:Name="labelmods" Content="Mod:" HorizontalAlignment="Right" Margin="0" HorizontalContentAlignment="Right" Grid.Row="1"/>
-				<ComboBox x:Name="games" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="games_SelectionChanged" Grid.Column="1" Height="22" VerticalAlignment="Top">
-					<ComboBox.ItemTemplate>
-						<DataTemplate>
-							<TextBlock Text="{Binding Title}" Foreground="{Binding Foreground}"/>
-						</DataTemplate>
-					</ComboBox.ItemTemplate>
-				</ComboBox>
-				<ComboBox x:Name="mods" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="mods_SelectionChanged" Grid.Row="1" Grid.Column="1" Height="22" VerticalAlignment="Top">
-					<ComboBox.ItemTemplate>
-						<DataTemplate>
-							<TextBlock Text="{Binding Title}" Foreground="{Binding Foreground}"/>
-						</DataTemplate>
-					</ComboBox.ItemTemplate>
-				</ComboBox>
+				<ComboBox x:Name="games" ItemTemplate="{StaticResource coloreditemtemplate}" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="games_SelectionChanged" Grid.Column="1" Height="22" VerticalAlignment="Top"/>
+				<ComboBox x:Name="mods" ItemTemplate="{StaticResource coloreditemtemplate}" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="mods_SelectionChanged" Grid.Row="1" Grid.Column="1" Height="22" VerticalAlignment="Top"/>
 				<Label x:Name="labelmaps" Content="Map:" HorizontalAlignment="Right" Margin="0" HorizontalContentAlignment="Right" Grid.Row="2"/>
-				<ComboBox x:Name="maps" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="maps_SelectionChanged" Grid.Row="2" Grid.Column="1" Height="22" VerticalAlignment="Top">
-					<ComboBox.ItemTemplate>
-						<DataTemplate>
-							<TextBlock Text="{Binding Title}" Foreground="{Binding Foreground}"/>
-						</DataTemplate>
-					</ComboBox.ItemTemplate>
-				</ComboBox>
+				<ComboBox x:Name="maps" ItemTemplate="{StaticResource coloreditemtemplate}" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="maps_SelectionChanged" Grid.Row="2" Grid.Column="1" Height="22" VerticalAlignment="Top"/>
 				<Label x:Name="labelskills" Content="Skill:" HorizontalAlignment="Right" Margin="0" HorizontalContentAlignment="Right" Grid.Row="3"/>
-				<ComboBox x:Name="skills" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="skills_SelectionChanged" Grid.Row="3" Grid.Column="1" Height="22" VerticalAlignment="Top">
-					<ComboBox.ItemTemplate>
-						<DataTemplate>
-							<TextBlock Text="{Binding Title}" Foreground="{Binding Foreground}"/>
-						</DataTemplate>
-					</ComboBox.ItemTemplate>
-				</ComboBox>
+				<ComboBox x:Name="skills" ItemTemplate="{StaticResource coloreditemtemplate}" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="skills_SelectionChanged" Grid.Row="3" Grid.Column="1" Height="22" VerticalAlignment="Top"/>
 				<Label x:Name="labelclasses" Content="Class:" HorizontalAlignment="Right" Margin="0" HorizontalContentAlignment="Right" Grid.Row="4"/>
-				<ComboBox x:Name="classes" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="classes_SelectionChanged" Grid.Row="4" Grid.Column="1" Height="22" VerticalAlignment="Top">
-					<ComboBox.ItemTemplate>
-						<DataTemplate>
-							<TextBlock Text="{Binding Title}" Foreground="{Binding Foreground}"/>
-						</DataTemplate>
-					</ComboBox.ItemTemplate>
-				</ComboBox>
+				<ComboBox x:Name="classes" ItemTemplate="{StaticResource coloreditemtemplate}" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="classes_SelectionChanged" Grid.Row="4" Grid.Column="1" Height="22" VerticalAlignment="Top"/>
 				<Label x:Name="labeldemos" Content="Demo:" HorizontalAlignment="Right" Margin="0" HorizontalContentAlignment="Right" Grid.Row="5"/>
-				<ComboBox x:Name="demos" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="demos_SelectionChanged" Grid.Row="5" Grid.Column="1" Height="22" VerticalAlignment="Top">
-					<ComboBox.ItemTemplate>
-						<DataTemplate>
-							<TextBlock Text="{Binding Title}" Foreground="{Binding Foreground}"/>
-						</DataTemplate>
-					</ComboBox.ItemTemplate>
-				</ComboBox>
+				<ComboBox x:Name="demos" ItemTemplate="{StaticResource coloreditemtemplate}" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="demos_SelectionChanged" Grid.Row="5" Grid.Column="1" Height="22" VerticalAlignment="Top"/>
 			</Grid>
 		</GroupBox>
 		<GroupBox x:Name="grouppreview" Header=" Command Line: " Margin="6,2" Grid.Row="2">

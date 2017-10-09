@@ -21,6 +21,8 @@ namespace mxd.SQL2.Items
 		private string modpath; // c:\quake\mymod
 		private bool isbuiltin; // true for mods enabled by special cmdline params, like -rogue
 
+		protected override ItemType type => ItemType.MOD;
+
 		#endregion
 
 		#region ================= Properties
@@ -30,7 +32,6 @@ namespace mxd.SQL2.Items
 		public string ModPath => modpath; // c:\quake\Arcane Dimensions
 		public bool IsBuiltIn => isbuiltin;
 
-		public override ItemType Type => ItemType.MOD;
 		private new bool IsRandom; // No random mods
 
 		#endregion

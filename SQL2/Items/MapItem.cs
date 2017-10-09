@@ -1,6 +1,7 @@
 ﻿#region ================= Namespaces
 
 using System;
+using System.Windows;
 using System.Windows.Media;
 using mxd.SQL2.DataReaders;
 
@@ -22,13 +23,14 @@ namespace mxd.SQL2.Items
 		private readonly string maptitle; // "The Introduction"
 		private readonly ResourceType restype;
 
+		protected override ItemType type => ItemType.MAP;
+
 		#endregion
 
 		#region ================= Properties
 
 		public string MapTitle => maptitle;
 		public ResourceType ResourceType => restype;
-		public override ItemType Type => ItemType.MAP;
 
 		#endregion
 
@@ -59,9 +61,9 @@ namespace mxd.SQL2.Items
 			switch(restype)
 			{
 				case ResourceType.NONE: break; // Already set in AbstractItem
-				case ResourceType.FOLDER: foreground = Brushes.Black; break;
-				case ResourceType.PAK: foreground = Brushes.DarkSlateGray; break;
-				case ResourceType.PK3: foreground = Brushes.MidnightBlue; break;
+				case ResourceType.FOLDER: foreground = SystemColors.ActiveCaptionTextBrush; break;
+				case ResourceType.PAK: foreground = Brushes.DarkGreen; break;
+				case ResourceType.PK3: foreground = Brushes.DarkBlue; break;
 				default: throw new NotImplementedException("Unknown ResourceType!");
 			}
 		}

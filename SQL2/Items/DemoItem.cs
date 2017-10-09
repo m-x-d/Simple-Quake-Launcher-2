@@ -22,6 +22,8 @@ namespace mxd.SQL2.Items
 		private readonly string maptitle;
 		private readonly bool isinvalid;
 
+		protected override ItemType type => ItemType.DEMO;
+
 		#endregion
 
 		#region ================= Properties
@@ -33,7 +35,6 @@ namespace mxd.SQL2.Items
 		public string MapTitle => maptitle; // Benis Devastation
 		public bool IsInvalid => isinvalid;
 
-		public override ItemType Type => ItemType.DEMO;
 		private new bool IsRandom; // No random demos
 
 		#endregion

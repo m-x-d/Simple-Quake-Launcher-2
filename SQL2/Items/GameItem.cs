@@ -10,6 +10,8 @@ namespace mxd.SQL2.Items
 
 		private readonly string modfolder;
 
+		protected override ItemType type => ItemType.GAME;
+
 		#endregion
 
 		#region ================= Properties
@@ -18,7 +20,6 @@ namespace mxd.SQL2.Items
 		// Title: EP1: Scourge of Armagon
 		public string ModFolder => modfolder; // c:\Quake\mymod
 
-		public override ItemType Type => ItemType.GAME;
 		private new bool IsRandom; // No random base games
 
 		#endregion

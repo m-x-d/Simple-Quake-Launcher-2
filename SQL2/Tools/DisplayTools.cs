@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using mxd.SQL2.Data;
 using mxd.SQL2.Items;
 
 #endregion
@@ -65,11 +66,11 @@ namespace mxd.SQL2.Tools
 
 		#region ================= Methods
 
-		public static IEnumerable<ResolutionItem> GetVideoModes()
+		public static List<ResolutionItem> GetVideoModes()
 		{
-			DeviceMode dm = new DeviceMode();
+			var dm = new DeviceMode();
 			var modes = new Dictionary<string, ResolutionItem>(1);
-			Rectangle curmode = Screen.PrimaryScreen.WorkingArea;
+			var curmode = Screen.PrimaryScreen.WorkingArea;
 			int i = 0;
 			
 			while(EnumDisplaySettings(null, i++, ref dm))
@@ -79,10 +80,25 @@ namespace mxd.SQL2.Tools
 					modes.Add(key, new ResolutionItem(dm.dmPelsWidth, dm.dmPelsHeight));
 			}
 
-			List<ResolutionItem> list = modes.Values.ToList();
-			list.Sort((i1, i2) => (i1.Width == i2.Width ? i1.Height.CompareTo(i2.Height) : i1.Width.CompareTo(i2.Width)));
-			list.Reverse();
-			return list;
+			// Sort in descending order...
+			var result = modes.Values.ToList();
+			result.Sort((i1, i2) => (i1.Width == i2.Width ? i1.Height.CompareTo(i2.Height) : i1.Width.CompareTo(i2.Width)) * -1);
+			return result;
+		}
+
+		public static List<ResolutionItem> GetFixedVideoModes(List<VideoModeInfo> rmodes)
+		{
+			var curmode = Screen.PrimaryScreen.WorkingArea;
+			var result = new List<ResolutionItem>();
+
+			// Pick all the modes smaller than curmode...
+			foreach(var vmi in rmodes)
+				if(vmi.Width < curmode.Width && vmi.Height < curmode.Height)
+					result.Add(new ResolutionItem(vmi.Width, vmi.Height, vmi.Index));
+
+			// Sort in descending order...
+			result.Sort((i1, i2) => (i1.Width == i2.Width ? i1.Height.CompareTo(i2.Height) : i1.Width.CompareTo(i2.Width)) * -1);
+			return result;
 		}
 
 		#endregion

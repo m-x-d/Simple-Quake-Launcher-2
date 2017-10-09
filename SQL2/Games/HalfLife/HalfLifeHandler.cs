@@ -3,8 +3,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using mxd.SQL2.Data;
 using mxd.SQL2.DataReaders;
 using mxd.SQL2.Items;
+using mxd.SQL2.Tools;
 
 #endregion
 
@@ -15,6 +17,7 @@ namespace mxd.SQL2.Games.HalfLife
 		#region ================= Variables
 
 		private Dictionary<string, string> knowngamefolders; // Folder names and titles for official expansions, <rogue, MP2: Ground Zero>
+		private List<VideoModeInfo> rmodes;
 		private HashSet<string> nonengines; // HL comes with a lot of unrelated exes...
 
 		#endregion
@@ -65,8 +68,8 @@ namespace mxd.SQL2.Games.HalfLife
 			getdemoinfo = HalfLifeDemoReader.GetDemoInfo;
 
 			// Setup launch params
-			launchparams[ItemType.ENGINE] = "{0} -dev -console";
-			launchparams[ItemType.RESOLUTION] = "-window -w {0} -h {1}";
+			launchparams[ItemType.ENGINE] = string.Empty;
+			launchparams[ItemType.RESOLUTION] = "+fullscreen 0 +vid_mode {0}"; // "-sw -w {0} -h {1}"
 			launchparams[ItemType.GAME] = string.Empty;
 			launchparams[ItemType.MOD] = "-game {0}";
 			launchparams[ItemType.MAP] = "+map {0}";
@@ -92,6 +95,38 @@ namespace mxd.SQL2.Games.HalfLife
 				{ "tfc", "Team Fortress Classic" },
 			};
 
+			// Setup fixed r_modes... Taken from engine\client\gl_vidnt.c (xash)
+			int c = 0;
+			rmodes = new List<VideoModeInfo>
+			{
+				new VideoModeInfo(640, 480, c++),
+				new VideoModeInfo(800, 600, c++),
+				new VideoModeInfo(960, 720, c++),
+				new VideoModeInfo(1024, 768, c++),
+				new VideoModeInfo(1152, 864, c++),
+				new VideoModeInfo(1280, 960, c++),
+				new VideoModeInfo(1280, 1024, c++),
+				new VideoModeInfo(1600, 1200, c++),
+				new VideoModeInfo(2048, 1536, c++),
+
+				new VideoModeInfo(800, 480, c++),
+				new VideoModeInfo(856, 480, c++),
+				new VideoModeInfo(960, 540, c++),
+				new VideoModeInfo(1024, 576, c++),
+				new VideoModeInfo(1024, 600, c++),
+				new VideoModeInfo(1280, 720, c++),
+				new VideoModeInfo(1360, 768, c++),
+				new VideoModeInfo(1366, 768, c++),
+				new VideoModeInfo(1440, 900, c++),
+				new VideoModeInfo(1680, 1050, c++),
+				new VideoModeInfo(1920, 1080, c++),
+				new VideoModeInfo(1920, 1200, c++),
+				new VideoModeInfo(2560, 1440, c++),
+				new VideoModeInfo(2560, 1600, c++),
+				new VideoModeInfo(1600, 900, c++),
+				new VideoModeInfo(3840, 2160, c++),
+			};
+
 			// Setup non-engines...
 			nonengines = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
 			{
@@ -110,6 +145,11 @@ namespace mxd.SQL2.Games.HalfLife
 		#endregion
 
 		#region ================= Methods
+
+		public override List<ResolutionItem> GetVideoModes()
+		{
+			return DisplayTools.GetFixedVideoModes(rmodes);
+		}
 
 		public override List<ModItem> GetMods()
 		{

@@ -14,13 +14,18 @@ namespace mxd.SQL2.Items
 		public static readonly ResolutionItem Default = new ResolutionItem();
 
 		#endregion
-		
+
+		#region ================= Variables
+
+		protected override ItemType type => ItemType.RESOLUTION;
+
+		#endregion
+
 		#region ================= Properties
 
 		public readonly int Width;
 		public readonly int Height;
 
-		public override ItemType Type => ItemType.RESOLUTION;
 		private new bool IsRandom; // No random resolutions
 
 		#endregion
@@ -29,9 +34,7 @@ namespace mxd.SQL2.Items
 
 		private ResolutionItem() : base(NAME_DEFAULT, "0x0") { }
 
-		public ResolutionItem(string title, int index) : base(title, index.ToString()) { }
-
-		public ResolutionItem(int width, int height) : base(width + "x" + height, width + "x" + height)
+		public ResolutionItem(int width, int height, int index = -1) : base(width + "x" + height, (index == -1 ? width + "x" + height : index.ToString()))
 		{
 			Width = width;
 			Height = height;
@@ -39,7 +42,7 @@ namespace mxd.SQL2.Items
 
 		protected override string GetArgument(string val)
 		{
-			// val is Either WIDTHxHEIGHT or INDEX...
+			// val is either WIDTHxHEIGHT or INDEX...
 			int w, h;
 			string[] pieces = value.Split(new[] { "x" }, StringSplitOptions.None);
 			if(pieces.Length == 2 && int.TryParse(pieces[0], out w) && int.TryParse(pieces[1], out h))

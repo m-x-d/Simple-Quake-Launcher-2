@@ -1,5 +1,6 @@
 ﻿#region ================= Namespaces
 
+using System.Windows;
 using System.Windows.Media;
 using mxd.SQL2.Games;
 
@@ -30,14 +31,14 @@ namespace mxd.SQL2.Items
 
 		protected Brush foreground;
 
+		protected abstract ItemType type { get; }
+
 		#endregion
 
 		#region ================= Properties
 
-		public abstract ItemType Type { get; }
-
 		public virtual string Value => value;       // e1m1
-		public virtual string Argument => (israndom ? GetArgument(GameHandler.Current.GetRandomItem(Type)) : argument); // +map "e1 m1"
+		public virtual string Argument => (israndom ? GetArgument(GameHandler.Current.GetRandomItem(type)) : argument); // +map "e1 m1"
 		public virtual string ArgumentPreview => argumentpreview; // +map ???
 		public virtual string Title => title;       // e1m1 | The Underhalls
 
@@ -57,11 +58,11 @@ namespace mxd.SQL2.Items
 
 			this.title = title;
 			this.value = GetSafeValue(value.ToLowerInvariant());
-			this.param = GameHandler.Current.LaunchParameters[Type];
+			this.param = GameHandler.Current.LaunchParameters[type];
 			this.argument = GetArgument(this.value);
 			this.argumentpreview = GetArgument(israndom ? "???" : this.value);
 
-			this.foreground = (israndom || isdefault ? Brushes.Gray : Brushes.Black);
+			this.foreground = (israndom || isdefault ? SystemColors.InactiveCaptionTextBrush : SystemColors.ActiveCaptionTextBrush);
 		}
 
 		#endregion

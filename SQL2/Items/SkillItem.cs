@@ -15,9 +15,9 @@ namespace mxd.SQL2.Items
 
 		#endregion
 
-		#region ================= Properties
+		#region ================= Variables
 
-		public override ItemType Type => ItemType.SKILL;
+		protected override ItemType type => ItemType.SKILL;
 
 		#endregion
 

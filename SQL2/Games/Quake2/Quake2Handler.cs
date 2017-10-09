@@ -3,8 +3,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using mxd.SQL2.Data;
 using mxd.SQL2.DataReaders;
 using mxd.SQL2.Items;
+using mxd.SQL2.Tools;
 
 #endregion
 
@@ -15,6 +17,7 @@ namespace mxd.SQL2.Games.Quake2
 		#region ================= Variables
 
 		private Dictionary<string, string> knowngamefolders; // Folder names and titles for official expansions, <rogue, MP2: Ground Zero>
+		private List<VideoModeInfo> rmodes;
 
 		#endregion
 
@@ -67,7 +70,7 @@ namespace mxd.SQL2.Games.Quake2
 
 			// Setup launch params
 			launchparams[ItemType.ENGINE] = string.Empty;
-			launchparams[ItemType.RESOLUTION] = "+vid_fullscreen 0 +set r_mode -1 +r_customwidth {0} +r_customheight {1}";
+			launchparams[ItemType.RESOLUTION] = "+vid_fullscreen 0 +set r_mode {0}"; // "+vid_fullscreen 0 +r_customwidth {0} +r_customheight {1}" -> works unreliably in KMQuake2, doesn't work in Q2 v3.24
 			launchparams[ItemType.GAME] = string.Empty;
 			launchparams[ItemType.MOD] = "+set game {0}";
 			launchparams[ItemType.MAP] = "+map {0}";
@@ -91,6 +94,46 @@ namespace mxd.SQL2.Games.Quake2
 				{ "XATRIX", "MP2: Ground Zero" },
 			};
 
+			// Setup fixed r_modes... Taken from qcommon\vid_modes.h (KMQ2)
+			int c = 3; // The first two r_modes are ignored by KMQ2
+			rmodes = new List<VideoModeInfo>
+			{
+				new VideoModeInfo(640, 480, c++), 
+				new VideoModeInfo(800, 600, c++),
+				new VideoModeInfo(960, 720, c++),
+				new VideoModeInfo(1024, 768, c++),
+				new VideoModeInfo(1152, 864, c++),
+				new VideoModeInfo(1280, 960, c++),
+				new VideoModeInfo(1280, 1024, c++),
+				new VideoModeInfo(1400, 1050, c++),
+				new VideoModeInfo(1600, 1200, c++),
+				new VideoModeInfo(1920, 1440, c++),
+				new VideoModeInfo(2048, 1536, c++),
+
+				new VideoModeInfo(800, 480, c++),
+				new VideoModeInfo(856, 480, c++),
+				new VideoModeInfo(1024, 600, c++),
+				new VideoModeInfo(1280, 720, c++),
+				new VideoModeInfo(1280, 768, c++),
+				new VideoModeInfo(1280, 800, c++),
+				new VideoModeInfo(1360, 768, c++),
+				new VideoModeInfo(1366, 768, c++),
+				new VideoModeInfo(1440, 900, c++),
+				new VideoModeInfo(1600, 900, c++),
+				new VideoModeInfo(1600, 1024, c++),
+				new VideoModeInfo(1680, 1050, c++),
+				new VideoModeInfo(1920, 1080, c++),
+				new VideoModeInfo(1920, 1200, c++),
+				new VideoModeInfo(2560, 1080, c++),
+				new VideoModeInfo(2560, 1440, c++),
+				new VideoModeInfo(2560, 1600, c++),
+				new VideoModeInfo(3200, 1800, c++),
+				new VideoModeInfo(3440, 1440, c++),
+				new VideoModeInfo(3840, 2160, c++),
+				new VideoModeInfo(3840, 2400, c++),
+				new VideoModeInfo(5120, 2880, c++),
+			};
+
 			// Pass on to base...
 			base.Setup(gamepath);
 		}
@@ -98,6 +141,11 @@ namespace mxd.SQL2.Games.Quake2
 		#endregion
 
 		#region ================= Methods
+
+		public override List<ResolutionItem> GetVideoModes()
+		{
+			return DisplayTools.GetFixedVideoModes(rmodes);
+		}
 
 		public override List<DemoItem> GetDemos(string modpath)
 		{

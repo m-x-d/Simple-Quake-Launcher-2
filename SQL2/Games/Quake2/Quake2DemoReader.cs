@@ -35,7 +35,7 @@ namespace mxd.SQL2.Games.Quake2
 
 			int blocklength = reader.ReadInt32();
 			if(reader.BaseStream.Position + blocklength >= reader.BaseStream.Length) return null;
-			long blockend = reader.ReadUInt32() + reader.BaseStream.Position;
+			long blockend = blocklength + reader.BaseStream.Position;
 
 			int messagetype = reader.ReadByte();
 			if(messagetype != SERVERINFO) return null;

@@ -9,9 +9,9 @@
 
 		#endregion
 
-		#region ================= Properties
+		#region ================= Variables
 
-		public override ItemType Type => ItemType.CLASS;
+		protected override ItemType type => ItemType.CLASS;
 
 		#endregion
 
