@@ -82,7 +82,7 @@ namespace mxd.SQL2.Games.Hexen2
 				new SkillItem("Easy", "0"),
 				new SkillItem("Medium", "1", true),
 				new SkillItem("Hard", "2"),
-				new SkillItem("Very Hard", "3")
+				new SkillItem("Very Hard", "3", false, true)
 			});
 
 			// Setup classes (requires launchparams)

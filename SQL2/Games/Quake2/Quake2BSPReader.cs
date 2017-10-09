@@ -3,6 +3,7 @@
 using System;
 using System.IO;
 using mxd.SQL2.Data;
+using mxd.SQL2.DataReaders;
 using mxd.SQL2.Items;
 using mxd.SQL2.Tools;
 
@@ -21,7 +22,7 @@ namespace mxd.SQL2.Games.Quake2
 
 		#region ================= GetMapInfo
 
-		public static MapItem GetMapInfo(string name, BinaryReader reader)
+		public static MapItem GetMapInfo(string name, BinaryReader reader, ResourceType restype)
 		{
 			long offset = reader.BaseStream.Position;
 
@@ -30,7 +31,7 @@ namespace mxd.SQL2.Games.Quake2
 			int version = reader.ReadInt32();
 
 			if(magic != BSP_MAGIC || version != BSP_VERSION)
-				return new MapItem(name);
+				return new MapItem(name, restype);
 
 			// Next is lump directory. We are interested in the first one
 
@@ -38,7 +39,7 @@ namespace mxd.SQL2.Games.Quake2
 			long entdataend = entdatastart + reader.ReadUInt32();
 
 			if(entdatastart >= reader.BaseStream.Length || entdataend >= reader.BaseStream.Length)
-				return new MapItem(name);
+				return new MapItem(name, restype);
 
 			// Get entities data. Worldspawn should be the first entry
 			reader.BaseStream.Position = entdatastart + 1; // Skip the first "{"
@@ -84,7 +85,7 @@ namespace mxd.SQL2.Games.Quake2
 
 			// Return MapItem with title, if we have one
 			title = GameHandler.Current.CheckMapTitle(title);
-			return (!string.IsNullOrEmpty(title) ? new MapItem(title, name) : new MapItem(name));
+			return (!string.IsNullOrEmpty(title) ? new MapItem(title, name, restype) : new MapItem(name, restype));
 		}
 
 		#endregion

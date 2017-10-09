@@ -81,7 +81,7 @@ namespace mxd.SQL2.Games.Quake2
 				new SkillItem("Easy", "0"),
 				new SkillItem("Medium", "1", true),
 				new SkillItem("Hard", "2"),
-				new SkillItem("Nightmare", "3")
+				new SkillItem("Nightmare", "3", false, true)
 			});
 
 			// Setup known folders

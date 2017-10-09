@@ -14,6 +14,12 @@ namespace mxd.SQL2.DataReaders
 {
 	public static class PAKReader
 	{
+		#region ================= Variables
+
+		private const ResourceType restype = ResourceType.PAK;
+
+		#endregion
+
 		#region ================= Maps
 
 		public static void GetMaps(string modpath, Dictionary<string, MapItem> mapslist, GameHandler.GetMapInfoDelegate getmapinfo)
@@ -51,14 +57,14 @@ namespace mxd.SQL2.DataReaders
 
 								// Go to data location
 								reader.BaseStream.Position = offset;
-								mapitem = getmapinfo(mapname, reader);
+								mapitem = getmapinfo(mapname, reader, restype);
 								
 								// Restore position
 								reader.BaseStream.Position = curpos;
 							}
 							else
 							{
-								mapitem = new MapItem(mapname);
+								mapitem = new MapItem(mapname, restype);
 							}
 
 							// Add to collection

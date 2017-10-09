@@ -1,6 +1,7 @@
 ﻿#region ================= Namespaces
 
 using System.IO;
+using System.Windows.Media;
 
 #endregion
 
@@ -50,6 +51,7 @@ namespace mxd.SQL2.Items
 			this.modname = string.Empty;
 			this.mapfilepath = mapfilepath;
 			this.maptitle = maptitle;
+			this.foreground = Brushes.Black;
 		}
 
 		// "qw", "demos\dm3_demo.dem", "maps\dm3.bsp", "Whatever Title DM3 Has"
@@ -58,12 +60,14 @@ namespace mxd.SQL2.Items
 			this.modname = modname;
 			this.mapfilepath = mapfilepath;
 			this.maptitle = maptitle;
+			this.foreground = Brushes.Black;
 		}
 
 		public DemoItem(string filename, string message, bool isinvalid = true) : base((string.IsNullOrEmpty(message) ? filename : filename + " | " + message), filename)
 		{
 			this.isinvalid = isinvalid;
 			this.maptitle = Path.GetFileName(filename);
+			this.foreground = (isinvalid ? Brushes.DarkRed : Brushes.Black);
 		}
 
 		#endregion

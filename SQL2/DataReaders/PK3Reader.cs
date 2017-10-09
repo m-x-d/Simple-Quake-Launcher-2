@@ -15,6 +15,12 @@ namespace mxd.SQL2.DataReaders
 {
 	public static class PK3Reader
 	{
+		#region ================= Variables
+
+		private const ResourceType restype = ResourceType.PK3;
+
+		#endregion
+
 		#region ================= Maps
 
 		public static void GetMaps(string modpath, Dictionary<string, MapItem> mapslist, GameHandler.GetMapInfoDelegate getmapinfo)
@@ -40,13 +46,13 @@ namespace mxd.SQL2.DataReaders
 									copy.Position = 0;
 
 									using(var reader = new BinaryReader(copy))
-										mapitem = getmapinfo(mapname, reader);
+										mapitem = getmapinfo(mapname, reader, restype);
 								}
 							}
 						}
 						else
 						{
-							mapitem = new MapItem(mapname);
+							mapitem = new MapItem(mapname, restype);
 						}
 
 						// Add to collection

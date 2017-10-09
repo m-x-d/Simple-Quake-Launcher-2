@@ -29,6 +29,8 @@ namespace mxd.SQL2.Items
 
 		private ResolutionItem() : base(NAME_DEFAULT, "0x0") { }
 
+		public ResolutionItem(string title, int index) : base(title, index.ToString()) { }
+
 		public ResolutionItem(int width, int height) : base(width + "x" + height, width + "x" + height)
 		{
 			Width = width;
@@ -37,10 +39,14 @@ namespace mxd.SQL2.Items
 
 		protected override string GetArgument(string val)
 		{
+			// val is Either WIDTHxHEIGHT or INDEX...
 			int w, h;
 			string[] pieces = value.Split(new[] { "x" }, StringSplitOptions.None);
 			if(pieces.Length == 2 && int.TryParse(pieces[0], out w) && int.TryParse(pieces[1], out h))
 				return string.Format(param, w, h);
+
+			if(int.TryParse(val, out w))
+				return string.Format(param, w);
 
 			// Should never happen
 			throw new InvalidDataException("Unexpected screen resolution: " + val);

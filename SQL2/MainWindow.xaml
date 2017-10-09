@@ -21,8 +21,8 @@
 		<GroupBox Grid.Row="0" x:Name="groupenginesettings" Header=" Engine Settings: " Margin="6,6,6,2">
 			<Grid Margin="0,3,0,0">
 				<Grid.RowDefinitions>
-					<RowDefinition Height="24*"/>
-					<RowDefinition Height="24*"/>
+					<RowDefinition Name="rowengine" Height="24*"/>
+					<RowDefinition Name="rowresolution" Height="24*"/>
 				</Grid.RowDefinitions>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="78*"/>
@@ -40,7 +40,13 @@
 						</DataTemplate>
 					</ComboBox.ItemTemplate>
 				</ComboBox>
-				<ComboBox x:Name="resolutions" Margin="5,2,0,2" IsReadOnly="True" Height="24" SelectionChanged="resolutions_SelectionChanged" Grid.Column="1" Grid.Row="1" VerticalAlignment="Top"/>
+				<ComboBox x:Name="resolutions" Margin="5,2,0,2" IsReadOnly="True" Height="24" SelectionChanged="resolutions_SelectionChanged" Grid.Column="1" Grid.Row="1" VerticalAlignment="Top">
+					<ComboBox.ItemTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding Title}" Foreground="{Binding Foreground}"/>
+						</DataTemplate>
+					</ComboBox.ItemTemplate>
+				</ComboBox>
 			</Grid>
 		</GroupBox>
 		<GroupBox x:Name="groupgamesettings" Header=" Game Settings: " Margin="6,2" Grid.Row="1">
@@ -59,16 +65,52 @@
 				</Grid.RowDefinitions>
 				<Label x:Name="labelgames" Content="Game:" Margin="0" HorizontalContentAlignment="Right" HorizontalAlignment="Right"/>
 				<Label x:Name="labelmods" Content="Mod:" HorizontalAlignment="Right" Margin="0" HorizontalContentAlignment="Right" Grid.Row="1"/>
-				<ComboBox x:Name="games" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="games_SelectionChanged" Grid.Column="1" Height="22" VerticalAlignment="Top"/>
-				<ComboBox x:Name="mods" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="mods_SelectionChanged" Grid.Row="1" Grid.Column="1" Height="22" VerticalAlignment="Top"/>
+				<ComboBox x:Name="games" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="games_SelectionChanged" Grid.Column="1" Height="22" VerticalAlignment="Top">
+					<ComboBox.ItemTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding Title}" Foreground="{Binding Foreground}"/>
+						</DataTemplate>
+					</ComboBox.ItemTemplate>
+				</ComboBox>
+				<ComboBox x:Name="mods" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="mods_SelectionChanged" Grid.Row="1" Grid.Column="1" Height="22" VerticalAlignment="Top">
+					<ComboBox.ItemTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding Title}" Foreground="{Binding Foreground}"/>
+						</DataTemplate>
+					</ComboBox.ItemTemplate>
+				</ComboBox>
 				<Label x:Name="labelmaps" Content="Map:" HorizontalAlignment="Right" Margin="0" HorizontalContentAlignment="Right" Grid.Row="2"/>
-				<ComboBox x:Name="maps" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="maps_SelectionChanged" Grid.Row="2" Grid.Column="1" Height="22" VerticalAlignment="Top"/>
+				<ComboBox x:Name="maps" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="maps_SelectionChanged" Grid.Row="2" Grid.Column="1" Height="22" VerticalAlignment="Top">
+					<ComboBox.ItemTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding Title}" Foreground="{Binding Foreground}"/>
+						</DataTemplate>
+					</ComboBox.ItemTemplate>
+				</ComboBox>
 				<Label x:Name="labelskills" Content="Skill:" HorizontalAlignment="Right" Margin="0" HorizontalContentAlignment="Right" Grid.Row="3"/>
-				<ComboBox x:Name="skills" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="skills_SelectionChanged" Grid.Row="3" Grid.Column="1" Height="22" VerticalAlignment="Top"/>
+				<ComboBox x:Name="skills" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="skills_SelectionChanged" Grid.Row="3" Grid.Column="1" Height="22" VerticalAlignment="Top">
+					<ComboBox.ItemTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding Title}" Foreground="{Binding Foreground}"/>
+						</DataTemplate>
+					</ComboBox.ItemTemplate>
+				</ComboBox>
 				<Label x:Name="labelclasses" Content="Class:" HorizontalAlignment="Right" Margin="0" HorizontalContentAlignment="Right" Grid.Row="4"/>
-				<ComboBox x:Name="classes" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="classes_SelectionChanged" Grid.Row="4" Grid.Column="1" Height="22" VerticalAlignment="Top"/>
+				<ComboBox x:Name="classes" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="classes_SelectionChanged" Grid.Row="4" Grid.Column="1" Height="22" VerticalAlignment="Top">
+					<ComboBox.ItemTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding Title}" Foreground="{Binding Foreground}"/>
+						</DataTemplate>
+					</ComboBox.ItemTemplate>
+				</ComboBox>
 				<Label x:Name="labeldemos" Content="Demo:" HorizontalAlignment="Right" Margin="0" HorizontalContentAlignment="Right" Grid.Row="5"/>
-				<ComboBox x:Name="demos" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="demos_SelectionChanged" Grid.Row="5" Grid.Column="1" Height="22" VerticalAlignment="Top"/>
+				<ComboBox x:Name="demos" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="demos_SelectionChanged" Grid.Row="5" Grid.Column="1" Height="22" VerticalAlignment="Top">
+					<ComboBox.ItemTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding Title}" Foreground="{Binding Foreground}"/>
+						</DataTemplate>
+					</ComboBox.ItemTemplate>
+				</ComboBox>
 			</Grid>
 		</GroupBox>
 		<GroupBox x:Name="grouppreview" Header=" Command Line: " Margin="6,2" Grid.Row="2">

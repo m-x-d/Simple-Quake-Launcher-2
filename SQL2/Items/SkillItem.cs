@@ -1,4 +1,10 @@
-﻿namespace mxd.SQL2.Items
+﻿#region ================= Namespaces
+
+using System.Windows.Media;
+
+#endregion
+
+namespace mxd.SQL2.Items
 {
 	public class SkillItem : AbstractItem
 	{
@@ -17,10 +23,11 @@
 
 		#region ================= Constructor
 
-		public SkillItem(string title, string value, bool isdefault = false) : base(title, value)
+		public SkillItem(string title, string value, bool isdefault = false, bool isnightmare = false) : base(title, value)
 		{
 			this.isdefault = isdefault;
 			if(isdefault) this.value = NAME_DEFAULT;
+			if(isnightmare) foreground = Brushes.DarkRed;
 		}
 
 		#endregion

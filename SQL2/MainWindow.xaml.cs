@@ -69,16 +69,24 @@ namespace mxd.SQL2
 			UpdateEngines();
 
 			// Fill video modes list
-			var videomodes = DisplayTools.GetVideoModes();
-			resolutions.Items.Add(ResolutionItem.Default);
-			foreach(ResolutionItem mode in videomodes)
+			var videomodes = GameHandler.Current.GetVideoModes();
+			if(videomodes.Count > 0)
 			{
-				resolutions.Items.Add(mode);
-				if(mode.ToString() == Configuration.WindowSize.ToString())
-					resolutions.SelectedIndex = resolutions.Items.Count - 1;
-			}
+				resolutions.Items.Add(ResolutionItem.Default);
+				foreach(ResolutionItem mode in videomodes)
+				{
+					resolutions.Items.Add(mode);
+					if(mode.ToString() == Configuration.WindowSize.ToString())
+						resolutions.SelectedIndex = resolutions.Items.Count - 1;
+				}
 
-			if(resolutions.SelectedIndex == -1) resolutions.SelectedIndex = 0;
+				if(resolutions.SelectedIndex == -1) resolutions.SelectedIndex = 0;
+			}
+			else
+			{
+				// Um... go on regardless, I guess...
+				rowresolution.Height = new GridLength(0);
+			}
 
 			// Setup base game
 			if(GameHandler.Current.BaseGames.Count > 0)
@@ -249,16 +257,12 @@ namespace mxd.SQL2
 			var demoitems = GameHandler.Current.GetDemos(curmod.ModPath);
 			if(demoitems.Count == 0) return;
 
-			demos.Items.Add(new ComboBoxItem { Content = DemoItem.None });
+			demos.Items.Add(DemoItem.None);
 
 			foreach(var di in demoitems)
 			{
-				var cbi = new ComboBoxItem { Content = di };
-				if(di.IsInvalid) cbi.Foreground = Brushes.DarkRed;
-				demos.Items.Add(cbi);
-
-				if(di.Value == Configuration.Demo)
-					demos.SelectedItem = cbi;
+				demos.Items.Add(di);
+				if(di.Value == Configuration.Demo) demos.SelectedItem = di;
 			}
 
 			// Select the first item...
@@ -329,7 +333,7 @@ namespace mxd.SQL2
 		private void UpdateInterface()
 		{
 			// Disable map, skill and class dropdowns when a demo is selected...
-			var demo = GetCurrentDemo();
+			var demo = (DemoItem)demos.SelectedItem;
 			bool enable = (demo == null || demo.IsDefault);
 			foreach(var c in new Control[]{ maps, labelmaps, skills, labelskills, classes, labelclasses })
 				c.IsEnabled = enable;
@@ -355,12 +359,6 @@ namespace mxd.SQL2
 			return mi;
 		}
 
-		// Return only when exists and non-default
-		private DemoItem GetCurrentDemo()
-		{
-			return (DemoItem)((ComboBoxItem)demos.SelectedItem)?.Content;
-		}
-
 		private Dictionary<ItemType, AbstractItem> GetLaunchParams()
 		{
 			var result = new Dictionary<ItemType, AbstractItem>(8);
@@ -371,7 +369,7 @@ namespace mxd.SQL2
 			result[ItemType.MOD] = ((mods.IsVisible && mods.IsEnabled) ? (ModItem)mods.SelectedItem : null);
 			result[ItemType.SKILL] = ((skills.IsVisible && skills.IsEnabled) ? (SkillItem)skills.SelectedItem : null);
 			result[ItemType.CLASS] = ((classes.IsVisible && classes.IsEnabled) ? (ClassItem)classes.SelectedItem : null);
-			result[ItemType.DEMO] = ((demos.IsVisible && demos.IsEnabled) ? GetCurrentDemo() : null);
+			result[ItemType.DEMO] = ((demos.IsVisible && demos.IsEnabled) ? (DemoItem)demos.SelectedItem : null);
 			result[ItemType.MAP] = ((maps.IsVisible && maps.IsEnabled && (result[ItemType.DEMO] == null || result[ItemType.DEMO].IsDefault)) ? (MapItem)maps.SelectedItem : null);
 
 			return result;
@@ -608,7 +606,7 @@ namespace mxd.SQL2
 		private void demos_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if(blockupdate || demos.Items.Count == 0) return;
-			var demo = GetCurrentDemo();
+			var demo = (DemoItem)demos.SelectedItem;
 			Configuration.Demo = (demo != null ? demo.Value : string.Empty);
 
 			UpdateInterface();

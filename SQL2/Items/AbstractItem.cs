@@ -1,5 +1,6 @@
 ﻿#region ================= Namespaces
 
+using System.Windows.Media;
 using mxd.SQL2.Games;
 
 #endregion
@@ -27,6 +28,8 @@ namespace mxd.SQL2.Items
 		protected bool israndom;
 		protected bool isdefault;
 
+		protected Brush foreground;
+
 		#endregion
 
 		#region ================= Properties
@@ -40,6 +43,8 @@ namespace mxd.SQL2.Items
 
 		public bool IsRandom => israndom;
 		public bool IsDefault => isdefault;
+
+		public Brush Foreground => foreground;
 
 		#endregion
 
@@ -55,6 +60,8 @@ namespace mxd.SQL2.Items
 			this.param = GameHandler.Current.LaunchParameters[Type];
 			this.argument = GetArgument(this.value);
 			this.argumentpreview = GetArgument(israndom ? "???" : this.value);
+
+			this.foreground = (israndom || isdefault ? Brushes.Gray : Brushes.Black);
 		}
 
 		#endregion

@@ -10,7 +10,9 @@ using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using mxd.SQL2.DataReaders;
 using mxd.SQL2.Items;
+using mxd.SQL2.Tools;
 
 #endregion
 
@@ -66,7 +68,7 @@ namespace mxd.SQL2.Games
 		#region ================= Delegates
 
 		// Map title retrieval
-		public delegate MapItem GetMapInfoDelegate(string mapname, BinaryReader reader);
+		public delegate MapItem GetMapInfoDelegate(string mapname, BinaryReader reader, ResourceType restype);
 
 		// Maps gathering
 		protected delegate void GetFolderMapsDelegate(string modpath, Dictionary<string, MapItem> mapslist, GetMapInfoDelegate getmapinfo);
@@ -152,6 +154,12 @@ namespace mxd.SQL2.Games
 
 		#region ================= Data gathering
 
+		// Because some engines have hardcoded resolution lists...
+		public virtual List<ResolutionItem> GetVideoModes()
+		{
+			return DisplayTools.GetVideoModes();
+		}
+
 		public abstract List<ModItem> GetMods();
 
 		public virtual List<DemoItem> GetDemos(string modpath) // c:\Quake\MyMod
@@ -195,9 +203,9 @@ namespace mxd.SQL2.Games
 			Dictionary<string, MapItem> maplist = new Dictionary<string, MapItem>(StringComparer.OrdinalIgnoreCase);
 
 			// Get maps from all supported sources
-			if(getfoldermaps != null) getfoldermaps(modpath, maplist, getmapinfo);
-			if(getpakmaps != null) getpakmaps(modpath, maplist, getmapinfo);
-			if(getpk3maps != null) getpk3maps(modpath, maplist, getmapinfo);
+			getfoldermaps?.Invoke(modpath, maplist, getmapinfo);
+			getpakmaps?.Invoke(modpath, maplist, getmapinfo);
+			getpk3maps?.Invoke(modpath, maplist, getmapinfo);
 
 			// Store map names...
 			mapnames = new HashSet<string>(maplist.Keys, StringComparer.OrdinalIgnoreCase);
@@ -206,7 +214,11 @@ namespace mxd.SQL2.Games
 			// Sort and return the List
 			List<MapItem> mapitems = new List<MapItem>(maplist.Values.Count);
 			foreach(MapItem mi in maplist.Values) mapitems.Add(mi);
-			mapitems.Sort((s1, s2) => string.Compare(s1.Value, s2.Value, StringComparison.OrdinalIgnoreCase));
+			mapitems.Sort((s1, s2) =>
+			{
+				if(s1.ResourceType != s2.ResourceType) return (int)s1.ResourceType > (int)s2.ResourceType ? 1 : -1; // Sort by ResourceType
+				return string.Compare(s1.Value, s2.Value, StringComparison.OrdinalIgnoreCase);
+			});
 			return mapitems;
 		} 
 

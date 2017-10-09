@@ -13,6 +13,12 @@ namespace mxd.SQL2.DataReaders
 {
 	public static class DirectoryReader
 	{
+		#region ================= Variables
+
+		private const ResourceType restype = ResourceType.FOLDER;
+
+		#endregion
+
 		#region ================= Maps
 
 		public static void GetMaps(string modpath, Dictionary<string, MapItem> mapslist, GameHandler.GetMapInfoDelegate getmapinfo)
@@ -32,11 +38,11 @@ namespace mxd.SQL2.DataReaders
 				{
 					using(FileStream stream = File.OpenRead(file))
 						using(BinaryReader reader = new BinaryReader(stream, Encoding.ASCII))
-							mapitem = getmapinfo(mapname, reader);
+							mapitem = getmapinfo(mapname, reader, restype);
 				}
 				else
 				{
-					mapitem = new MapItem(mapname);
+					mapitem = new MapItem(mapname, restype);
 				}
 
 				// Add to collection
