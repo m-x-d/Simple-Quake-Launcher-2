@@ -80,10 +80,9 @@ namespace mxd.SQL2.DataReaders
 							short extralength = reader.ReadInt16();
 							string entry = reader.ReadStringExactLength(filenamelength);
 
-							if(Path.GetDirectoryName(entry.ToLower()) == "maps" && Path.GetExtension(entry).ToLower() == ".bsp")
+							if(Path.GetDirectoryName(entry.ToLower()) == "maps" && Path.GetExtension(entry).ToLower() == ".bsp"
+								&& (string.IsNullOrEmpty(prefix) || !Path.GetFileName(entry).StartsWith(prefix)) )
 							{
-								string mapname = Path.GetFileNameWithoutExtension(entry);
-								if(string.IsNullOrEmpty(prefix) || !mapname.StartsWith(prefix))
 									return true;
 							}
 

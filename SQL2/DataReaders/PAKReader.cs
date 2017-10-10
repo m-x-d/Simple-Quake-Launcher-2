@@ -101,11 +101,10 @@ namespace mxd.SQL2.DataReaders
 							string entry = reader.ReadStringExactLength(56).Trim(); // Read entry name
 							reader.BaseStream.Position += 8; // Skip unrelated stuff
 
-							if(Path.GetDirectoryName(entry.ToLower()) == "maps" && Path.GetExtension(entry).ToLower() == ".bsp")
+							if(Path.GetDirectoryName(entry.ToLower()) == "maps" && Path.GetExtension(entry).ToLower() == ".bsp"
+								&& (string.IsNullOrEmpty(prefix) || !Path.GetFileName(entry).StartsWith(prefix)) )
 							{
-								string mapname = Path.GetFileNameWithoutExtension(entry);
-								if(string.IsNullOrEmpty(prefix) || !mapname.StartsWith(prefix))
-									return true;
+								return true;
 							}
 						}
 					}

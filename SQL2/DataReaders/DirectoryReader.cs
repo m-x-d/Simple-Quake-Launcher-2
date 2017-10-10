@@ -62,8 +62,8 @@ namespace mxd.SQL2.DataReaders
 			foreach(string file in mapnames)
 			{
 				if(!file.EndsWith(".bsp", StringComparison.OrdinalIgnoreCase)) continue;
-				string mapname = Path.GetFileNameWithoutExtension(file);
-				if(!mapname.StartsWith(prefix)) return true;
+				if(string.IsNullOrEmpty(prefix) || !Path.GetFileName(file).StartsWith(prefix))
+					return true;
 			}
 
 			return false;
