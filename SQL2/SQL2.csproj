@@ -63,6 +63,7 @@
     </ApplicationDefinition>
     <Compile Include="Controls\PreviewRun.cs" />
     <Compile Include="Controls\PreviewTextBox.cs" />
+    <Compile Include="DataReaders\DeflateStreamWrapper.cs" />
     <Compile Include="DataReaders\ResourceType.cs" />
     <Compile Include="Data\Quake2Font.cs" />
     <Compile Include="Data\VideoModeInfo.cs" />

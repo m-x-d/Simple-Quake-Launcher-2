@@ -31,24 +31,19 @@ namespace mxd.SQL2.DataReaders
 				if(!file.EndsWith(".pk3", StringComparison.OrdinalIgnoreCase)) continue;
 				using(var arc = ZipFile.OpenRead(file))
 				{
-					foreach(var entry in arc.Entries)
+					foreach(var e in arc.Entries)
 					{
-						if(!GameHandler.Current.EntryIsMap(entry.FullName, mapslist)) continue;
-						string mapname = Path.GetFileNameWithoutExtension(entry.Name);
+						if(!GameHandler.Current.EntryIsMap(e.FullName, mapslist)) continue;
+						string mapname = Path.GetFileNameWithoutExtension(e.Name);
 						MapItem mapitem;
 
 						if(getmapinfo != null)
 						{
-							using(var stream = entry.Open())
+							using(var stream = e.Open())
 							{
-								using(var copy = new MemoryStream())
-								{
-									stream.CopyTo(copy);
-									copy.Position = 0;
-
-									using(var reader = new BinaryReader(copy))
-										mapitem = getmapinfo(mapname, reader, restype);
-								}
+								var wrapper = new DeflateStreamWrapper((DeflateStream)stream, e.Length);
+								using(var reader = new BinaryReader(wrapper))
+									mapitem = getmapinfo(mapname, reader, restype);
 							}
 						}
 						else
@@ -153,14 +148,9 @@ namespace mxd.SQL2.DataReaders
 
 						using(var stream = e.Open())
 						{
-							using(var copy = new MemoryStream())
-							{
-								stream.CopyTo(copy);
-								copy.Position = 0;
-
-								using(var reader = new BinaryReader(copy))
-									GameHandler.Current.AddDemoItem(entry, result, reader, restype);
-							}
+							var wrapper = new DeflateStreamWrapper((DeflateStream)stream, e.Length);
+							using(var reader = new BinaryReader(wrapper))
+								GameHandler.Current.AddDemoItem(entry, result, reader, restype);
 						}
 					}
 				}

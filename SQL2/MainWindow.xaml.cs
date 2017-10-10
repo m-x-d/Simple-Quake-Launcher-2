@@ -669,12 +669,14 @@ namespace mxd.SQL2
 
 		private void MainWindow_Activated(object sender, EventArgs e)
 		{
+#if !DEBUG
 			// Reload data after regaining focus
 			if(focusstate == FocusState.UNFOCUSED)
 			{
 				focusstate = FocusState.FOCUSED;
 				ReloadMods();
 			}
+#endif
 		}
 
 		private void MainWindow_Deactivated(object sender, EventArgs e)
