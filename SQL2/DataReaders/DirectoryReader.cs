@@ -58,10 +58,10 @@ namespace mxd.SQL2.DataReaders
 			// Get map files
 			string prefix = GameHandler.Current.IgnoredMapPrefix;
 			string[] mapnames = Directory.GetFiles(mapdir.FullName, "*.bsp");
-			if(string.IsNullOrEmpty(prefix) && mapnames.Length > 0) return true;
 
 			foreach(string file in mapnames)
 			{
+				if(!file.EndsWith(".bsp", StringComparison.OrdinalIgnoreCase)) continue;
 				string mapname = Path.GetFileNameWithoutExtension(file);
 				if(!mapname.StartsWith(prefix)) return true;
 			}
@@ -94,7 +94,7 @@ namespace mxd.SQL2.DataReaders
 
 					using(var stream = File.OpenRead(file))
 						using(var br = new BinaryReader(stream, Encoding.ASCII))
-							GameHandler.Current.AddDemoItem(relativedemopath, result, br);
+							GameHandler.Current.AddDemoItem(relativedemopath, result, br, restype);
 				}
 			}
 

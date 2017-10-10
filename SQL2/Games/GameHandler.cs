@@ -81,7 +81,7 @@ namespace mxd.SQL2.Games
 		protected delegate bool PK3ContainsMapsDelegate(string modpath);
 
 		// Demo info retrieval
-		protected delegate DemoItem GetDemoInfoDelegate(string demoname, BinaryReader reader);
+		protected delegate DemoItem GetDemoInfoDelegate(string demoname, BinaryReader reader, ResourceType restype);
 
 		// Demos gathering
 		protected delegate List<DemoItem> GetFolderDemosDelegate(string modpath, string demosfolder);
@@ -142,9 +142,9 @@ namespace mxd.SQL2.Games
 			var maplist = new Dictionary<string, MapItem>(StringComparer.OrdinalIgnoreCase);
 
 			// Get maps from all supported sources
-			if(getfoldermaps != null) getfoldermaps(defaultmodpath, maplist, null);
-			if(getpakmaps != null) getpakmaps(defaultmodpath, maplist, null);
-			if(getpk3maps != null) getpk3maps(defaultmodpath, maplist, null);
+			getfoldermaps?.Invoke(defaultmodpath, maplist, null);
+			getpakmaps?.Invoke(defaultmodpath, maplist, null);
+			getpk3maps?.Invoke(defaultmodpath, maplist, null);
 
 			// Store map names...
 			defaultmapnames = new HashSet<string>(maplist.Keys, StringComparer.OrdinalIgnoreCase);
@@ -179,7 +179,11 @@ namespace mxd.SQL2.Games
 			if(getpk3demos != null) AddDemos(demos, getpk3demos(modpath, modfolder), nameshash);
 
 			// Sort and return the List
-			demos.Sort((s1, s2) => string.Compare(s1.Value, s2.Value, StringComparison.OrdinalIgnoreCase));
+			demos.Sort((s1, s2) =>
+			{
+				if(s1.ResourceType != s2.ResourceType) return (int)s1.ResourceType > (int)s2.ResourceType ? 1 : -1; // Sort by ResourceType
+				return string.Compare(s1.Value, s2.Value, StringComparison.OrdinalIgnoreCase);
+			});
 			return demos;
 		}
 
@@ -278,25 +282,25 @@ namespace mxd.SQL2.Games
 			return false;
 		}
 
-		public virtual void AddDemoItem(string relativedemopath, List<DemoItem> demos, BinaryReader reader)
+		public virtual void AddDemoItem(string relativedemopath, List<DemoItem> demos, BinaryReader reader, ResourceType restype)
 		{
 			relativedemopath = relativedemopath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-			DemoItem di = getdemoinfo(relativedemopath, reader);
+			DemoItem di = getdemoinfo(relativedemopath, reader, restype);
 			if(di != null)
 			{
 				if(di.IsInvalid)
 					demos.Add(di);
 				else if(!mapnames.Contains(Path.GetFileNameWithoutExtension(di.MapFilePath))) // Check if we have a matching map...
-					demos.Add(new DemoItem(relativedemopath, "Missing map file: '" + di.MapFilePath + "'")); // Add anyway, but with a warning...
+					demos.Add(new DemoItem(relativedemopath, "Missing map file: '" + di.MapFilePath + "'", di.ResourceType)); // Add anyway, but with a warning...
 				else if(!string.IsNullOrEmpty(di.ModName) && string.Compare(modname, di.ModName, StringComparison.OrdinalIgnoreCase) != 0)
-					demos.Add(new DemoItem(relativedemopath, "Incorrect location: expected to be in '" + di.ModName + "' folder")); // Add anyway, but with a warning...
+					demos.Add(new DemoItem(relativedemopath, "Incorrect location: expected to be in '" + di.ModName + "' folder", di.ResourceType)); // Add anyway, but with a warning...
 				else
 					demos.Add(di);
 			}
 			else
 			{
 				// Add anyway, I guess...
-				demos.Add(new DemoItem(relativedemopath, "Unknown demo format"));
+				demos.Add(new DemoItem(relativedemopath, "Unknown demo format", restype));
 			}
 		}
 

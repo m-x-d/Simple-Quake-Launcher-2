@@ -12,7 +12,6 @@ using mxd.SQL2.Data;
 using mxd.SQL2.Games;
 using mxd.SQL2.Items;
 using mxd.SQL2.Tools;
-using Brushes = System.Windows.Media.Brushes;
 using File = System.IO.File;
 
 #endregion
@@ -41,7 +40,6 @@ namespace mxd.SQL2
 		private bool blockupdate;
 		private List<ModItem> allmods;
 		private FocusState focusstate;
-
 
 		#endregion
 
@@ -644,19 +642,14 @@ namespace mxd.SQL2
 		// Restore window location (fitzquake messes this up when launching in fullscreen)
 		private void ProcessOnExited(object sender, EventArgs e)
 		{
+			if(windowx == int.MaxValue || windowy == int.MaxValue) return;
+
 			// Cross-thread call required...
 			this.Dispatcher.Invoke(() =>
 			{
-				// Demo may've been recorded
-				UpdateDemosList();
-				UpdateInterface();
-
-				// Restore window position?
-				if(windowx != int.MaxValue && windowy != int.MaxValue)
-				{
-					this.Left = windowx;
-					this.Top = windowy;
-				}
+				// Restore window position
+				this.Left = windowx;
+				this.Top = windowy;
 			});
 		}
 
@@ -676,10 +669,6 @@ namespace mxd.SQL2
 
 		private void MainWindow_Activated(object sender, EventArgs e)
 		{
-#if DEBUG
-			return;
-#endif
-
 			// Reload data after regaining focus
 			if(focusstate == FocusState.UNFOCUSED)
 			{

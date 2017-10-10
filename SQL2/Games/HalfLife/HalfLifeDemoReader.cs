@@ -1,6 +1,7 @@
 ﻿#region ================= Namespaces
 
 using System.IO;
+using mxd.SQL2.DataReaders;
 using mxd.SQL2.Items;
 using mxd.SQL2.Tools;
 
@@ -19,7 +20,7 @@ namespace mxd.SQL2.Games.HalfLife
 		#region ================= GetDemoInfo
 
 		// https://sourceforge.net/p/lmpc/git/ci/master/tree/spec/dem-hl.spec
-		public static DemoItem GetDemoInfo(string demoname, BinaryReader reader)
+		public static DemoItem GetDemoInfo(string demoname, BinaryReader reader, ResourceType restype)
 		{
 			/*  0 char[8] magic;			/* == "HLDEMO\0\0" */
 			/*  8 uint32 demo_version;      /* == 5 (HL 1.1.0.1) */
@@ -37,7 +38,7 @@ namespace mxd.SQL2.Games.HalfLife
 			string modname = reader.ReadString('\0');
 
 			// Done. Easiest of them all :)
-			return new DemoItem(modname, demoname, mapname, mapname);
+			return new DemoItem(modname, demoname, mapname, mapname, restype);
 		}
 
 		#endregion

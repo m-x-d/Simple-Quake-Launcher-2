@@ -27,6 +27,7 @@ namespace mxd.SQL2.DataReaders
 			string[] pakfiles = Directory.GetFiles(modpath, "*.pak");
 			foreach(string file in pakfiles)
 			{
+				if(!file.EndsWith(".pak", StringComparison.OrdinalIgnoreCase)) continue;
 				using(FileStream stream = File.OpenRead(file))
 				{
 					using(BinaryReader reader = new BinaryReader(stream, Encoding.ASCII))
@@ -44,7 +45,7 @@ namespace mxd.SQL2.DataReaders
 						{
 							string entry = reader.ReadStringExactLength(56).Trim(); // Read entry name
 							int offset = reader.ReadInt32();
-							reader.BaseStream.Position += 4; //skip unrelated stuff
+							reader.BaseStream.Position += 4; // Skip unrelated stuff
 
 							if(!GameHandler.Current.EntryIsMap(entry, mapslist)) continue;
 							string mapname = Path.GetFileNameWithoutExtension(entry);
@@ -81,6 +82,7 @@ namespace mxd.SQL2.DataReaders
 			string prefix = GameHandler.Current.IgnoredMapPrefix;
 			foreach(string file in pakfiles)
 			{
+				if(!file.EndsWith(".pak", StringComparison.OrdinalIgnoreCase)) continue;
 				using(FileStream stream = File.OpenRead(file))
 				{
 					using(BinaryReader reader = new BinaryReader(stream, Encoding.ASCII))
@@ -125,6 +127,7 @@ namespace mxd.SQL2.DataReaders
 			// Get demo files
 			foreach(string file in pakfiles)
 			{
+				if(!file.EndsWith(".pak", StringComparison.OrdinalIgnoreCase)) continue;
 				using(FileStream stream = File.OpenRead(file))
 				{
 					using(BinaryReader reader = new BinaryReader(stream, Encoding.ASCII))
@@ -165,7 +168,7 @@ namespace mxd.SQL2.DataReaders
 							reader.BaseStream.Position = offset;
 
 							// Add demo data
-							GameHandler.Current.AddDemoItem(entry, result, reader);
+							GameHandler.Current.AddDemoItem(entry, result, reader, restype);
 
 							// Restore position
 							reader.BaseStream.Position = curpos;

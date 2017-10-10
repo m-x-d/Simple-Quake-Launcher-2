@@ -2,6 +2,7 @@
 
 using System.IO;
 using mxd.SQL2.Data;
+using mxd.SQL2.DataReaders;
 using mxd.SQL2.Items;
 using mxd.SQL2.Tools;
 
@@ -25,7 +26,7 @@ namespace mxd.SQL2.Games.Hexen2
 
 		#region ================= GetDemoInfo
 
-		public static DemoItem GetDemoInfo(string demoname, BinaryReader reader)
+		public static DemoItem GetDemoInfo(string demoname, BinaryReader reader, ResourceType restype)
 		{
 			// CD track (string terminated by '\n' (0x0A in ASCII))
 
@@ -77,7 +78,7 @@ namespace mxd.SQL2.Games.Hexen2
 			if(string.IsNullOrEmpty(maptitle)) maptitle = Path.GetFileName(mapfilepath);
 
 			// Done
-			return new DemoItem(demoname, mapfilepath, maptitle);
+			return new DemoItem(demoname, mapfilepath, maptitle, restype);
 		}
 
 		#endregion

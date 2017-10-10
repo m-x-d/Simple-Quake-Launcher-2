@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using mxd.SQL2.Data;
+using mxd.SQL2.DataReaders;
 using mxd.SQL2.Items;
 using mxd.SQL2.Tools;
 
@@ -40,22 +41,22 @@ namespace mxd.SQL2.Games.Quake
 
 		#region ================= GetDemoInfo
 
-		public static DemoItem GetDemoInfo(string demoname, BinaryReader reader)
+		public static DemoItem GetDemoInfo(string demoname, BinaryReader reader, ResourceType restype)
 		{
 			string ext = Path.GetExtension(demoname);
 			if(string.IsNullOrEmpty(ext)) return null;
 
 			switch(ext.ToUpperInvariant())
 			{
-				case ".DEM": return GetDEMInfo(demoname, reader);
-				case ".MVD": return GetMVDInfo(demoname, reader);
-				case ".QWD": return GetQWDInfo(demoname, reader);
+				case ".DEM": return GetDEMInfo(demoname, reader, restype);
+				case ".MVD": return GetMVDInfo(demoname, reader, restype);
+				case ".QWD": return GetQWDInfo(demoname, reader, restype);
 				default: throw new NotImplementedException("Unsupported demo type: " + ext);
 			}
 		}
 
 		// https://www.quakewiki.net/archives/demospecs/dem/dem.html
-		private static DemoItem GetDEMInfo(string demoname, BinaryReader reader)
+		private static DemoItem GetDEMInfo(string demoname, BinaryReader reader, ResourceType restype)
 		{
 			// CD track (string terminated by '\n' (0x0A in ASCII))
 
@@ -99,11 +100,11 @@ namespace mxd.SQL2.Games.Quake
 			if(string.IsNullOrEmpty(maptitle)) maptitle = Path.GetFileName(mapfilepath);
 
 			// Done
-			return new DemoItem(demoname, mapfilepath, maptitle);
+			return new DemoItem(demoname, mapfilepath, maptitle, restype);
 		}
 
 		// https://www.quakewiki.net/archives/demospecs/qwd/qwd.html
-		private static DemoItem GetQWDInfo(string demoname, BinaryReader reader)
+		private static DemoItem GetQWDInfo(string demoname, BinaryReader reader, ResourceType restype)
 		{
 			// Block header:
 			// float time;                 
@@ -210,11 +211,11 @@ namespace mxd.SQL2.Games.Quake
 			}
 
 			// Done
-			return (alldatafound ? new DemoItem(game, demoname, mapfilepath, maptitle) : null);
+			return (alldatafound ? new DemoItem(game, demoname, mapfilepath, maptitle, restype) : null);
 		}
 
 		//TODO: Hacked in, needs more testing or proper format spec...
-		private static DemoItem GetMVDInfo(string demoname, BinaryReader reader)
+		private static DemoItem GetMVDInfo(string demoname, BinaryReader reader, ResourceType restype)
 		{
 			string game = string.Empty;
 			string maptitle = string.Empty;
@@ -300,7 +301,7 @@ namespace mxd.SQL2.Games.Quake
 			}
 
 			// Done
-			return (alldatafound ? new DemoItem(game, demoname, mapfilepath, maptitle) : null);
+			return (alldatafound ? new DemoItem(game, demoname, mapfilepath, maptitle, restype) : null);
 		}
 
 		#endregion

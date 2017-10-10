@@ -28,6 +28,7 @@ namespace mxd.SQL2.DataReaders
 			string[] zipfiles = Directory.GetFiles(modpath, "*.pk3");
 			foreach(string file in zipfiles)
 			{
+				if(!file.EndsWith(".pk3", StringComparison.OrdinalIgnoreCase)) continue;
 				using(var arc = ZipFile.OpenRead(file))
 				{
 					foreach(var entry in arc.Entries)
@@ -69,6 +70,7 @@ namespace mxd.SQL2.DataReaders
 
 			foreach(string file in zipfiles)
 			{
+				if(!file.EndsWith(".pk3", StringComparison.OrdinalIgnoreCase)) continue;
 				using(FileStream stream = File.OpenRead(file))
 				{
 					using(BinaryReader reader = new BinaryReader(stream, Encoding.ASCII))
@@ -127,6 +129,7 @@ namespace mxd.SQL2.DataReaders
 
 			foreach(string file in zipfiles)
 			{
+				if(!file.EndsWith(".pk3", StringComparison.OrdinalIgnoreCase)) continue;
 				using(var arc = ZipFile.OpenRead(file))
 				{
 					foreach(var e in arc.Entries)
@@ -156,7 +159,7 @@ namespace mxd.SQL2.DataReaders
 								copy.Position = 0;
 
 								using(var reader = new BinaryReader(copy))
-									GameHandler.Current.AddDemoItem(entry, result, reader);
+									GameHandler.Current.AddDemoItem(entry, result, reader, restype);
 							}
 						}
 					}

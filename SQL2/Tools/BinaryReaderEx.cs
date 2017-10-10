@@ -1,6 +1,7 @@
 ﻿#region ================= Namespaces
 
 using System.IO;
+using System.Text;
 
 #endregion
 
@@ -14,43 +15,40 @@ namespace mxd.SQL2.Tools
 		// Reads given length of bytes as a string 
 		public static string ReadStringExactLength(this BinaryReader br, int len)
 		{
-			string result = string.Empty;
+			char[] arr = new char[len];
 			int i;
 
 			for(i = 0; i < len; ++i)
 			{
 				var c = br.ReadChar();
-				if(c == '\0')
-				{
-					++i;
-					break;
-				}
-				result += c;
+				if(c == '\0') break;
+				arr[i] = c;
 			}
 
-			for(; i < len; ++i) br.ReadChar();
-			return result;
+			if(i < len) br.BaseStream.Position += (len - i - 1);
+			return new string(arr, 0, i);
 		}
 
 		// Reads a string until either maxlength chars are read or terminator char is encountered
 		public static string ReadString(this BinaryReader reader, int maxlength, char terminator = '\0')
 		{
-			string result = string.Empty;
+			char[] arr = new char[maxlength];
+			int i;
 
-			for(int i = 0; i < maxlength; i++)
+			for(i = 0; i < maxlength; i++)
 			{
 				var c = reader.ReadChar();
 				if(c == terminator) break;
-				result += c;
+				arr[i] = c;
 			}
 
-			return result;
+			return new string(arr, 0, i);
 		}
 
 		// Reads bytes as a string until given char, null or EOF is encountered
 		public static string ReadString(this BinaryReader br, char stopper)
 		{
-			string name = string.Empty;
+			var sb = new StringBuilder();
 
 			if(stopper == '\0')
 			{
@@ -58,7 +56,7 @@ namespace mxd.SQL2.Tools
 				{
 					var c = br.ReadChar();
 					if(c == '\0') break;
-					name += c;
+					sb.Append(c);
 				}
 			}
 			else
@@ -67,11 +65,11 @@ namespace mxd.SQL2.Tools
 				{
 					var c = br.ReadChar();
 					if(c == '\0' || c == stopper) break;
-					name += c;
+					sb.Append(c);
 				}
 			}
 			
-			return name;
+			return sb.ToString();
 		}
 
 		public static bool SkipString(this BinaryReader reader, int maxlength, char terminator = '\0')

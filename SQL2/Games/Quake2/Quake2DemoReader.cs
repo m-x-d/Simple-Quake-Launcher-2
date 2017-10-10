@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using mxd.SQL2.Data;
+using mxd.SQL2.DataReaders;
 using mxd.SQL2.Items;
 using mxd.SQL2.Tools;
 
@@ -27,7 +28,7 @@ namespace mxd.SQL2.Games.Quake2
 		#region ================= GetDemoInfo
 
 		// https://www.quakewiki.net/archives/demospecs/dm2/dm2.html
-		public static DemoItem GetDemoInfo(string demoname, BinaryReader reader)
+		public static DemoItem GetDemoInfo(string demoname, BinaryReader reader, ResourceType restype)
 		{
 			// uint blocklength
 			// SERVERINFO
@@ -74,7 +75,7 @@ namespace mxd.SQL2.Games.Quake2
 			}
 
 			if(!string.IsNullOrEmpty(maptitle) && !string.IsNullOrEmpty(mapfilepath))
-				return new DemoItem(demoname, mapfilepath, maptitle);
+				return new DemoItem(demoname, mapfilepath, maptitle, restype);
 
 			// No dice...
 			return null;

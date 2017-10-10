@@ -1,7 +1,10 @@
 ﻿#region ================= Namespaces
 
+using System;
 using System.IO;
+using System.Windows;
 using System.Windows.Media;
+using mxd.SQL2.DataReaders;
 
 #endregion
 
@@ -21,6 +24,7 @@ namespace mxd.SQL2.Items
 		private readonly string mapfilepath;
 		private readonly string maptitle;
 		private readonly bool isinvalid;
+		private readonly ResourceType restype;
 
 		protected override ItemType type => ItemType.DEMO;
 
@@ -34,6 +38,7 @@ namespace mxd.SQL2.Items
 		public string MapFilePath => mapfilepath; // maps/somemap.bsp
 		public string MapTitle => maptitle; // Benis Devastation
 		public bool IsInvalid => isinvalid;
+		public ResourceType ResourceType => restype;
 
 		private new bool IsRandom; // No random demos
 
@@ -47,28 +52,53 @@ namespace mxd.SQL2.Items
 		}
 
 		// "demos\dm3_demo.dem", "maps\dm3.bsp", "Whatever Title DM3 Has"
-		public DemoItem(string filename, string mapfilepath, string maptitle) : base(filename + " | map: " + maptitle, filename)
+		public DemoItem(string filename, string mapfilepath, string maptitle, ResourceType restype) : base(filename + " | map: " + maptitle, filename)
 		{
 			this.modname = string.Empty;
 			this.mapfilepath = mapfilepath;
 			this.maptitle = maptitle;
-			this.foreground = Brushes.Black;
+			this.restype = restype;
+			SetColor();
 		}
 
 		// "qw", "demos\dm3_demo.dem", "maps\dm3.bsp", "Whatever Title DM3 Has"
-		public DemoItem(string modname, string filename, string mapfilepath, string maptitle) : base(filename + " | map: " + maptitle, filename)
+		public DemoItem(string modname, string filename, string mapfilepath, string maptitle, ResourceType restype) : base(filename + " | map: " + maptitle, filename)
 		{
 			this.modname = modname;
 			this.mapfilepath = mapfilepath;
 			this.maptitle = maptitle;
-			this.foreground = Brushes.Black;
+			this.restype = restype;
+			SetColor();
 		}
 
-		public DemoItem(string filename, string message, bool isinvalid = true) : base((string.IsNullOrEmpty(message) ? filename : filename + " | " + message), filename)
+		public DemoItem(string filename, string message, ResourceType restype) : base((string.IsNullOrEmpty(message) ? filename : filename + " | " + message), filename)
 		{
-			this.isinvalid = isinvalid;
+			this.isinvalid = true;
 			this.maptitle = Path.GetFileName(filename);
-			this.foreground = (isinvalid ? Brushes.DarkRed : Brushes.Black);
+			this.restype = restype;
+			SetColor();
+		}
+
+		#endregion
+
+		#region ================= Methods
+
+		private void SetColor()
+		{
+			if(isinvalid)
+			{
+				foreground = Brushes.DarkRed;
+				return;
+			}
+
+			switch(restype)
+			{
+				case ResourceType.NONE: break; // Already set in AbstractItem
+				case ResourceType.FOLDER: foreground = SystemColors.ActiveCaptionTextBrush; break;
+				case ResourceType.PAK: foreground = Brushes.DarkGreen; break;
+				case ResourceType.PK3: foreground = Brushes.DarkBlue; break;
+				default: throw new NotImplementedException("Unknown ResourceType!");
+			}
 		}
 
 		#endregion
