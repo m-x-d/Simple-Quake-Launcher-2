@@ -68,8 +68,9 @@ namespace mxd.SQL2.Data
 						foreach(string arg in args)
 						{
 							string typestr = arg.Substring(0, 2);
-							ItemType type = ItemTypes.Markers.ContainsKey(typestr) ? ItemTypes.Markers[typestr] : ItemType.CLASS;
+							ItemType type = ItemTypes.Markers.ContainsKey(typestr) ? ItemTypes.Markers[typestr] : ItemType.ENGINE;
 							string trimmedarg = arg.Substring(2).Trim();
+							if(string.IsNullOrEmpty(trimmedarg)) continue;
 
 							if(ExtraArguments.ContainsKey(type))
 								ExtraArguments[type] += " " + trimmedarg;
@@ -108,8 +109,13 @@ namespace mxd.SQL2.Data
 			if(ExtraArguments.Count > 0)
 			{
 				var args = new List<string>();
-				foreach(var group in ExtraArguments) args.Add(ItemTypes.Types[group.Key] + " " + group.Value);
-				sb.AppendLine("extraargs" + separator[0] + string.Join(extraargsseparator[0], args.ToArray()));
+				foreach(var group in ExtraArguments)
+				{
+					if(!string.IsNullOrEmpty(group.Value))
+						args.Add(ItemTypes.Types[group.Key] + " " + group.Value);
+				}
+
+				if(args.Count > 0) sb.AppendLine("extraargs" + separator[0] + string.Join(extraargsseparator[0], args.ToArray()));
 			}
 
 			try

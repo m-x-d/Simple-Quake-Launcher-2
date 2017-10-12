@@ -32,6 +32,7 @@ namespace mxd.SQL2.Controls
 			this.PreviewKeyDown += OnPreviewKeyDown;
 			this.KeyUp += OnKeyUp;
 			this.SelectionChanged += OnSelectionChanged;
+			this.MouseUp += OnMouseUp;
 		}
 
 		#endregion
@@ -46,10 +47,8 @@ namespace mxd.SQL2.Controls
 			else
 				StoreCustomArguments();
 
-			// Clear current text
-			paragraph.Inlines.Clear();
-
-			// Set text
+			// Create runs
+			var inlines = new List<PreviewRun>();
 			foreach(var group in args)
 			{
 				var arg = group.Value;
@@ -57,17 +56,45 @@ namespace mxd.SQL2.Controls
 
 				// Add arg?
 				if(arg != null && !arg.IsDefault)
-				{
-					paragraph.Inlines.Add(new PreviewRun(arg.ArgumentPreview, arg, argtype, false));
-				}
+					inlines.Add(new PreviewRun(arg.ArgumentPreview, arg, argtype, false));
 
-				// Add custom arg? Add when either arg or extraarg is not empty 
-				if((arg != null && !arg.IsDefault) || Configuration.ExtraArguments.ContainsKey(argtype))
-				{
-					string text = (Configuration.ExtraArguments.ContainsKey(argtype) ? " " + Configuration.ExtraArguments[argtype] + " " : spacer);
-					paragraph.Inlines.Add(new PreviewRun(text, arg, argtype, true));
-				}
+				// Add custom arg? Add when extraarg is not empty
+				if(Configuration.ExtraArguments.ContainsKey(argtype))
+					inlines.Add(new PreviewRun(" " + Configuration.ExtraArguments[argtype] + " ", arg, argtype, true));
 			}
+
+			// No data? (unlikely to happen)
+			if(inlines.Count == 0)
+			{
+				paragraph.Inlines.Clear();
+				return;
+			}
+
+			// Add spacers...
+			PreviewRun previous = null;
+			var inlineswithspacers = new List<PreviewRun>();
+			foreach(var current in inlines)
+			{
+				// Insert spacer between non - editable runs
+				if(!current.IsEditable && previous != null && !previous.IsEditable)
+					inlineswithspacers.Add(new PreviewRun(spacer, previous.Item, previous.ItemType, true));
+
+				// Add current arg
+				inlineswithspacers.Add(current);
+
+				// Store previous arg
+				previous = current;
+			}
+
+			// Add spacer after the last arg?
+			var lastarg = inlines[inlines.Count - 1];
+			if(!lastarg.IsEditable) inlineswithspacers.Add(new PreviewRun(spacer, lastarg.Item, lastarg.ItemType, true));
+
+			// Clear current text
+			paragraph.Inlines.Clear();
+
+			// Set new text
+			paragraph.Inlines.AddRange(inlineswithspacers);
 		}
 
 		// Command line without engine name
@@ -101,20 +128,18 @@ namespace mxd.SQL2.Controls
 			if(paragraph.Inlines.Count == 0) return;
 
 			// Get custom args from current text...
-			var customargslist = new Dictionary<ItemType, string>(); // <ItemType, custom arg>
 			foreach(PreviewRun run in paragraph.Inlines)
 			{
-				// Custom args block?
 				if(run.IsEditable)
 				{
-					// Store custom text...
+					// Don't store empty strings
 					string text = run.Text.Trim();
-					if(!string.IsNullOrEmpty(text)) customargslist[run.ItemType] = text;
+					if(string.IsNullOrEmpty(text))
+						Configuration.ExtraArguments.Remove(run.ItemType);
+					else
+						Configuration.ExtraArguments[run.ItemType] = text;
 				}
 			}
-
-			// Store them in Configuration...
-			Configuration.ExtraArguments = customargslist;
 		}
 
 		#endregion
@@ -132,7 +157,7 @@ namespace mxd.SQL2.Controls
 				// Add the rest of the runs, if necessary
 				if(!selection.IsEmpty)
 				{
-					var endrun = (PreviewRun)selection.End.Parent;
+					var endrun = selection.End.Parent as PreviewRun;
 					if(startrun != endrun)
 					{
 						var startfound = false;
@@ -232,6 +257,26 @@ namespace mxd.SQL2.Controls
 					}
 				}
 			}
+		}
+
+		// Clear custom args on MMB click
+		private void OnMouseUp(object sender, MouseButtonEventArgs e)
+		{
+			if(e.ChangedButton != MouseButton.Middle) return;
+
+			// Editable run clicked?
+			var run = this.GetPositionFromPoint(e.GetPosition(this), true)?.Parent as PreviewRun;
+			if(run == null || !run.IsEditable || run.Text == spacer) return;
+
+			// Update text
+			run.Text = spacer;
+
+			// Update selection
+			var newsel = run.ContentStart.GetPositionAtOffset(1, LogicalDirection.Forward);
+			this.Selection.Select(newsel, newsel);
+
+			// Update stored args
+			StoreCustomArguments();
 		}
 
 		// Toggle textbox editability based on selection

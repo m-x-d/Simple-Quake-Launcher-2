@@ -34,7 +34,6 @@ namespace mxd.SQL2.Games.Quake2
 				return new MapItem(name, restype);
 
 			// Next is lump directory. We are interested in the first one
-
 			long entdatastart = reader.ReadUInt32() + offset;
 			long entdataend = entdatastart + reader.ReadUInt32();
 

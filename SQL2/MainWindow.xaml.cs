@@ -360,15 +360,17 @@ namespace mxd.SQL2
 		private Dictionary<ItemType, AbstractItem> GetLaunchParams()
 		{
 			var result = new Dictionary<ItemType, AbstractItem>(8);
+			var demo = ((demos.IsVisible && demos.IsEnabled) ? (DemoItem)demos.SelectedItem : null);
 
+			// Creation order should match args display order
 			result[ItemType.ENGINE] = (EngineItem)engines.SelectedItem;
 			result[ItemType.RESOLUTION] = (ResolutionItem)resolutions.SelectedItem;
 			result[ItemType.GAME] = ((games.IsVisible && games.IsEnabled) ? (GameItem)games.SelectedItem : null);
 			result[ItemType.MOD] = ((mods.IsVisible && mods.IsEnabled) ? (ModItem)mods.SelectedItem : null);
 			result[ItemType.SKILL] = ((skills.IsVisible && skills.IsEnabled) ? (SkillItem)skills.SelectedItem : null);
 			result[ItemType.CLASS] = ((classes.IsVisible && classes.IsEnabled) ? (ClassItem)classes.SelectedItem : null);
-			result[ItemType.DEMO] = ((demos.IsVisible && demos.IsEnabled) ? (DemoItem)demos.SelectedItem : null);
-			result[ItemType.MAP] = ((maps.IsVisible && maps.IsEnabled && (result[ItemType.DEMO] == null || result[ItemType.DEMO].IsDefault)) ? (MapItem)maps.SelectedItem : null);
+			result[ItemType.MAP] = ((maps.IsVisible && maps.IsEnabled && (demo == null || demo.IsDefault)) ? (MapItem)maps.SelectedItem : null);
+			result[ItemType.DEMO] = demo;
 
 			return result;
 		}
@@ -660,6 +662,7 @@ namespace mxd.SQL2
 
 		private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
+			cmdline.GetCommandLine(); // Force TextBox to store custom args...
 #if DEBUG
 			Configuration.Save();
 #else
