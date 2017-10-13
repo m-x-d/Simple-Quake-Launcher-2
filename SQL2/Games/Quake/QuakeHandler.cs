@@ -80,8 +80,8 @@ namespace mxd.SQL2.Games.Quake
 			basegames["ID1"] = new GameItem("Quake", "id1", "");
 			basegames["QUOTH"] = new GameItem("Quoth", "quoth", "-quoth");
 			basegames["NEHAHRA"] = new GameItem("Nehahra", "nehahra", "-nehahra");
-			basegames["HIPNOTIC"] = new GameItem("EP1: Scourge of Armagon", "hipnotic", "-hipnotic");
-			basegames["ROGUE"] = new GameItem("EP2: Dissolution of Eternity", "rogue", "-rogue");
+			basegames["HIPNOTIC"] = new GameItem("MP1: Scourge of Armagon", "hipnotic", "-hipnotic");
+			basegames["ROGUE"] = new GameItem("MP2: Dissolution of Eternity", "rogue", "-rogue");
 
 			// Pass on to base...
 			base.Setup(gamepath);

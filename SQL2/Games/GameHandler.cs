@@ -118,6 +118,7 @@ namespace mxd.SQL2.Games
 			launchparams = new Dictionary<ItemType, string>();
 			basegames = new Dictionary<string, GameItem>(StringComparer.OrdinalIgnoreCase);
 			mapnames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			defaultmapnames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			skills = new List<SkillItem>();
 			classes = new List<ClassItem>();
 			skillnames = new List<string>();
@@ -137,22 +138,30 @@ namespace mxd.SQL2.Games
 
 			if(classes.Count > 1) classes.Insert(0, ClassItem.Random);
 			if(classes.Count > 0) classes.Insert(0, ClassItem.Default);
-
-			// Store maps from default mod...
-			var maplist = new Dictionary<string, MapItem>(StringComparer.OrdinalIgnoreCase);
-
-			// Get maps from all supported sources
-			getfoldermaps?.Invoke(defaultmodpath, maplist, null);
-			getpakmaps?.Invoke(defaultmodpath, maplist, null);
-			getpk3maps?.Invoke(defaultmodpath, maplist, null);
-
-			// Store map names...
-			defaultmapnames = new HashSet<string>(maplist.Keys, StringComparer.OrdinalIgnoreCase);
 		}
 
 		#endregion
 
 		#region ================= Data gathering
+
+		// Quakespasm can play demos made for both ID1 maps and currently selected official MP from any folder...
+		public void UpdateDefaultMapNames(List<string> modpaths)
+		{
+			// Store maps from default mod...
+			var maplist = new Dictionary<string, MapItem>(StringComparer.OrdinalIgnoreCase);
+
+			// Get maps from all supported sources
+			foreach(string modpath in modpaths)
+			{
+				if(!Directory.Exists(modpath)) continue;
+				getfoldermaps?.Invoke(modpath, maplist, null);
+				getpakmaps?.Invoke(modpath, maplist, null);
+				getpk3maps?.Invoke(modpath, maplist, null);
+			}
+
+			// Store map names...
+			defaultmapnames = new HashSet<string>(maplist.Keys, StringComparer.OrdinalIgnoreCase);
+		}
 
 		// Because some engines have hardcoded resolution lists...
 		public virtual List<ResolutionItem> GetVideoModes()

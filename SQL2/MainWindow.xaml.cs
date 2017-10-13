@@ -106,6 +106,9 @@ namespace mxd.SQL2
 			// Setup mod folders
 			UpdateModsList();
 
+			// Update default map names
+			UpdateDefaultMapNames();
+
 			// Setup maps
 			UpdateMapsList();
 
@@ -153,11 +156,12 @@ namespace mxd.SQL2
 
 		#region ================= Utility
 
-		private void ReloadMods()
+		private void UpdateAll()
 		{
 			blockupdate = true;
 
 			UpdateModsList();
+			UpdateDefaultMapNames();
 			UpdateMapsList();
 			UpdateDemosList();
 			UpdateInterface();
@@ -183,6 +187,17 @@ namespace mxd.SQL2
 
 			// Select the Default item...
 			if(mods.SelectedIndex == -1) mods.SelectedIndex = 0;
+		}
+
+		// Quakespasm can play demos made for both ID1 maps and currently selected official MP from any folder...
+		private void UpdateDefaultMapNames()
+		{
+			List<string> defaultmaplocations = new List<string> { GameHandler.Current.DefaultModPath };
+
+			var game = (games.IsVisible && games.IsEnabled) ? (GameItem)games.SelectedItem : null;
+			if(game != null && !game.IsDefault) defaultmaplocations.Add(game.ModFolder);
+
+			GameHandler.Current.UpdateDefaultMapNames(defaultmaplocations);
 		}
 
 		private void UpdateMapsList()
@@ -479,7 +494,7 @@ namespace mxd.SQL2
 
 			if(mod != null && !Directory.Exists(mod.ModPath))
 			{
-				reasons.Add("- Selected game folder not exist!");
+				reasons.Add("- Selected mod folder not exist!");
 				reloadmods = true;
 			}
 
@@ -487,7 +502,7 @@ namespace mxd.SQL2
 			{
 				MessageBox.Show(this, "Unable to launch:\n" + string.Join("\n", reasons.ToArray()) + "\n\nAffected data will be updated.", App.ErrorMessageTitle);
 				if(reloadengines) UpdateEngines();
-				if(reloadmods) ReloadMods();
+				if(reloadmods) UpdateAll();
 				return;
 			}
 
@@ -559,6 +574,7 @@ namespace mxd.SQL2
 			var mod = GetCurrentMod((ModItem)mods.SelectedItem);
 			Configuration.Mod = (mod != null && !mod.IsDefault ? mod.Value : string.Empty);
 
+			UpdateDefaultMapNames();
 			UpdateMapsList();
 			UpdateDemosList();
 			UpdateCommandLinePreview();
@@ -677,7 +693,7 @@ namespace mxd.SQL2
 			if(focusstate == FocusState.UNFOCUSED)
 			{
 				focusstate = FocusState.FOCUSED;
-				ReloadMods();
+				UpdateAll();
 			}
 #endif
 		}

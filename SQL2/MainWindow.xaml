@@ -81,7 +81,17 @@
 			</Grid>
 		</GroupBox>
 		<GroupBox x:Name="grouppreview" Header=" Command Line: " Margin="6,2" Grid.Row="2">
-			<controls:PreviewTextBox x:Name="cmdline" ContextMenu="{x:Null}" IsReadOnlyCaretVisible="True" Margin="0,4,0,0" IsInactiveSelectionHighlightEnabled="True" VerticalScrollBarVisibility="Auto"/>
+			<controls:PreviewTextBox x:Name="cmdline" ContextMenu="{x:Null}" IsReadOnlyCaretVisible="True" Margin="0,4,0,0" IsInactiveSelectionHighlightEnabled="True" VerticalScrollBarVisibility="Auto">
+				<controls:PreviewTextBox.ToolTip>
+					<TextBlock>
+						<Span>Some </Span>
+						<Span Foreground="{x:Static SystemColors.HotTrackBrush}" Background="{x:Static SystemColors.GradientInactiveCaptionBrush}">text areas</Span>
+						<Span> are editable.<LineBreak/>Middle-click an </Span>
+						<Span Foreground="{x:Static SystemColors.HotTrackBrush}" Background="{x:Static SystemColors.GradientInactiveCaptionBrush}">editable text area</Span>
+						<Span> to clear it</Span>
+					</TextBlock>
+				</controls:PreviewTextBox.ToolTip>
+			</controls:PreviewTextBox>
 		</GroupBox>
 		<Button x:Name="copyargs" Margin="0,2,32,0" VerticalAlignment="Top" Height="18" HorizontalAlignment="Right" Width="18" Click="copyargs_Click" Grid.Row="2">
 			<Image Source="Resources/Copy.png"/>
