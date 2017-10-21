@@ -57,9 +57,13 @@ namespace mxd.SQL2.Games.Quake
 
 			getdemoinfo = QuakeDemoReader.GetDemoInfo;
 
+			// Setup fullscreen args...
+			fullscreenarg[true] = string.Empty;
+			fullscreenarg[false] = "-window ";
+
 			// Setup launch params
 			launchparams[ItemType.ENGINE] = string.Empty;
-			launchparams[ItemType.RESOLUTION] = "-window -width {0} -height {1}";
+			launchparams[ItemType.RESOLUTION] = "{2}-width {0} -height {1}";
 			launchparams[ItemType.GAME] = string.Empty;
 			launchparams[ItemType.MOD] = "-game {0}";
 			launchparams[ItemType.MAP] = "+map {0}";

@@ -69,14 +69,20 @@ namespace mxd.SQL2.Tools
 		{
 			var dm = new DeviceMode();
 			var modes = new Dictionary<string, ResolutionItem>(1);
-			var curmode = Screen.PrimaryScreen.WorkingArea;
+			var screenarea = Screen.PrimaryScreen.WorkingArea;
+			var screenres = Screen.PrimaryScreen.Bounds;
 			int i = 0;
 			
 			while(EnumDisplaySettings(null, i++, ref dm))
 			{
 				string key = dm.dmPelsWidth + "x" + dm.dmPelsHeight;
-				if(!modes.ContainsKey(key) && dm.dmPelsWidth < curmode.Width && dm.dmPelsHeight < curmode.Height)
-					modes.Add(key, new ResolutionItem(dm.dmPelsWidth, dm.dmPelsHeight));
+				if(!modes.ContainsKey(key))
+				{
+					if(dm.dmPelsWidth < screenarea.Width && dm.dmPelsHeight < screenarea.Height)
+						modes.Add(key, new ResolutionItem(dm.dmPelsWidth, dm.dmPelsHeight));
+					else if(dm.dmPelsWidth == screenres.Width && dm.dmPelsHeight == screenres.Height)
+						modes.Add(key, new ResolutionItem(dm.dmPelsWidth, dm.dmPelsHeight, -1, true));
+				}
 			}
 
 			// Sort in descending order...
@@ -87,14 +93,19 @@ namespace mxd.SQL2.Tools
 
 		public static List<ResolutionItem> GetFixedVideoModes(List<VideoModeInfo> rmodes)
 		{
-			var curmode = Screen.PrimaryScreen.WorkingArea;
+			var screenarea = Screen.PrimaryScreen.WorkingArea;
+			var screenres = Screen.PrimaryScreen.Bounds;
 			var result = new List<ResolutionItem>();
 
-			// Pick all the modes smaller than curmode...
+			// Pick all the modes smaller than screenarea or equal to screenres...
 			foreach(var vmi in rmodes)
-				if(vmi.Width < curmode.Width && vmi.Height < curmode.Height)
+			{
+				if(vmi.Width < screenarea.Width && vmi.Height < screenarea.Height)
 					result.Add(new ResolutionItem(vmi.Width, vmi.Height, vmi.Index));
-
+				else if(vmi.Width == screenres.Width && vmi.Height == screenres.Height)
+					result.Add(new ResolutionItem(vmi.Width, vmi.Height, vmi.Index, true));
+			}
+				
 			// Sort in descending order...
 			result.Sort((i1, i2) => (i1.Width == i2.Width ? i1.Height.CompareTo(i2.Height) : i1.Width.CompareTo(i2.Width)) * -1);
 			return result;

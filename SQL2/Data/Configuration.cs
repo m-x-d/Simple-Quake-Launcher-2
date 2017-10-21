@@ -15,7 +15,7 @@ namespace mxd.SQL2.Data
 		#region ================= Properties
 
 		public static string Engine = string.Empty;
-		public static ResolutionItem WindowSize = ResolutionItem.Default;
+		public static string WindowSize = string.Empty;
 		public static string Mod = string.Empty;
 		public static string Map = string.Empty;
 		public static string Demo = string.Empty;
@@ -55,13 +55,6 @@ namespace mxd.SQL2.Data
 
 				switch(key)
 				{
-					case "resolution":
-						int w, h;
-						string[] pieces = value.Split(new[] {"x"}, StringSplitOptions.None);
-						if(pieces.Length == 2 && int.TryParse(pieces[0], out w) && int.TryParse(pieces[1], out h))
-							WindowSize = new ResolutionItem(w, h);
-						break;
-
 					case "extraargs":
 						ExtraArguments = new Dictionary<ItemType, string>();
 						string[] args = value.Split(extraargsseparator, StringSplitOptions.RemoveEmptyEntries);
@@ -79,6 +72,7 @@ namespace mxd.SQL2.Data
 						}
 						break;
 
+					case "resolution": WindowSize = value; break;
 					case "engine": Engine = value; break;
 					case "game": Mod = value; break;
 					case "map": Map = value; break;
@@ -99,7 +93,7 @@ namespace mxd.SQL2.Data
 			var sb = new StringBuilder(100);
 
 			if(!string.IsNullOrEmpty(Engine)) sb.AppendLine("engine" + separator[0] + Engine);
-			if(!WindowSize.IsDefault) sb.AppendLine("resolution" + separator[0] + WindowSize);
+			if(!string.IsNullOrEmpty(WindowSize)) sb.AppendLine("resolution" + separator[0] + WindowSize);
 			if(!string.IsNullOrEmpty(Mod)) sb.AppendLine("game" + separator[0] + Mod);
 			if(!string.IsNullOrEmpty(Map)) sb.AppendLine("map" + separator[0] + Map);
 			if(!string.IsNullOrEmpty(Demo)) sb.AppendLine("demo" + separator[0] + Demo);

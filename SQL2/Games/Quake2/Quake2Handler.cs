@@ -68,9 +68,13 @@ namespace mxd.SQL2.Games.Quake2
 
 			getdemoinfo = Quake2DemoReader.GetDemoInfo;
 
+			// Setup fullscreen args...
+			fullscreenarg[true]  = "1";
+			fullscreenarg[false] = "0";
+
 			// Setup launch params
 			launchparams[ItemType.ENGINE] = string.Empty;
-			launchparams[ItemType.RESOLUTION] = "+vid_fullscreen 0 +set r_mode {0}"; // "+vid_fullscreen 0 +r_customwidth {0} +r_customheight {1}" -> works unreliably in KMQuake2, doesn't work in Q2 v3.24
+			launchparams[ItemType.RESOLUTION] = "+vid_fullscreen {1} +set r_mode {0}"; // "+vid_fullscreen 0 +r_customwidth {0} +r_customheight {1}" -> works unreliably in KMQuake2, doesn't work in Q2 v3.24
 			launchparams[ItemType.GAME] = string.Empty;
 			launchparams[ItemType.MOD] = "+set game {0}";
 			launchparams[ItemType.MAP] = "+map {0}";
@@ -90,8 +94,8 @@ namespace mxd.SQL2.Games.Quake2
 			// Setup known folders
 			knowngamefolders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
 			{
-				{ "ROGUE", "MP1: The Reckoning" },
-				{ "XATRIX", "MP2: Ground Zero" },
+				{ "XATRIX", "MP1: The Reckoning" },
+				{ "ROGUE", "MP2: Ground Zero" },
 			};
 
 			// Setup fixed r_modes... Taken from qcommon\vid_modes.h (KMQ2)

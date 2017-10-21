@@ -74,7 +74,7 @@ namespace mxd.SQL2
 				foreach(ResolutionItem mode in videomodes)
 				{
 					resolutions.Items.Add(mode);
-					if(mode.ToString() == Configuration.WindowSize.ToString())
+					if(mode.ToString() == Configuration.WindowSize)
 						resolutions.SelectedIndex = resolutions.Items.Count - 1;
 				}
 
@@ -562,7 +562,7 @@ namespace mxd.SQL2
 		private void resolutions_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if(blockupdate || resolutions.Items.Count == 0) return;
-			Configuration.WindowSize = (resolutions.SelectedIndex > 0 ? (ResolutionItem)resolutions.SelectedItem : ResolutionItem.Default);
+			Configuration.WindowSize = (resolutions.SelectedIndex > 0 ? ((ResolutionItem)resolutions.SelectedItem).ToString() : string.Empty);
 
 			UpdateCommandLinePreview();
 		}

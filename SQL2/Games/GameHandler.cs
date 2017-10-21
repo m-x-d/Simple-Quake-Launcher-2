@@ -30,6 +30,7 @@ namespace mxd.SQL2.Games
 		protected Dictionary<string, GameItem> basegames; // Quake-specific game flags; <folder name, BaseGameItem>
 		protected List<SkillItem> skills; // Easy, Medium, Hard, Nightmare!
 		protected List<ClassItem> classes; // Cleric, Paladin, Necromancer [default], Assassin, Demoness [Hexen 2 only]
+		protected Dictionary<bool, string> fullscreenarg; // true: arg to run the game in fullscreen, false: arg to run the game windowed
 
 		private HashSet<string> mapnames;
 		private HashSet<string> defaultmapnames; // Maps from defaultmodpath. Needed to properly check demos MapPath data... 
@@ -55,6 +56,7 @@ namespace mxd.SQL2.Games
 		public ICollection<GameItem> BaseGames => basegames.Values;
 		public List<SkillItem> Skills => skills;
 		public List<ClassItem> Classes => classes;
+		public Dictionary<bool, string> FullScreenArg => fullscreenarg;
 
 		#endregion
 
@@ -124,6 +126,7 @@ namespace mxd.SQL2.Games
 			skillnames = new List<string>();
 			classnames = new List<string>();
 			supporteddemoextensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			fullscreenarg = new Dictionary<bool, string>();
 		}
 
 		protected abstract bool CanHandle(string gamepath);

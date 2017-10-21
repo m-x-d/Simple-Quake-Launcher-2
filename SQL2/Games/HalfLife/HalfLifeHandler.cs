@@ -67,9 +67,13 @@ namespace mxd.SQL2.Games.HalfLife
 
 			getdemoinfo = HalfLifeDemoReader.GetDemoInfo;
 
+			// Setup fullscreen args...
+			fullscreenarg[true] = "1";
+			fullscreenarg[false] = "0";
+
 			// Setup launch params
 			launchparams[ItemType.ENGINE] = string.Empty;
-			launchparams[ItemType.RESOLUTION] = "+fullscreen 0 +vid_mode {0}"; // "-sw -w {0} -h {1}"
+			launchparams[ItemType.RESOLUTION] = "+fullscreen {1} +vid_mode {0}"; // "-sw -w {0} -h {1}"
 			launchparams[ItemType.GAME] = string.Empty;
 			launchparams[ItemType.MOD] = "-game {0}";
 			launchparams[ItemType.MAP] = "+map {0}";
