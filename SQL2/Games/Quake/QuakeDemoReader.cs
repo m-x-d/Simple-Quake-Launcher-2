@@ -21,6 +21,10 @@ namespace mxd.SQL2.Games.Quake
 		private const int PROTOCOL_FITZQUAKE = 666;
 		private const int PROTOCOL_RMQ = 999;
 
+		// "Special" protocols...
+		private const int PROTOCOL_FTE  = ('F' << 0) + ('T' << 8) + ('E' << 16) + ('X' << 24);
+		private const int PROTOCOL_FTE2 = ('F' << 0) + ('T' << 8) + ('E' << 16) + ('2' << 24);
+
 		// QW protocols
 		private static readonly HashSet<int> ProtocolsQW = new HashSet<int> { 24, 25, 26, 27, 28 }; // The not so many QW PROTOCOL_VERSIONs...
 
@@ -99,6 +103,22 @@ namespace mxd.SQL2.Games.Quake
 
 						case SVC_SERVERINFO:
 							protocol = reader.ReadInt32();
+
+							// FTE2 shenanigans...
+							if(protocol == PROTOCOL_FTE || protocol == PROTOCOL_FTE2)
+							{
+								reader.BaseStream.Position += 4; // Skip fteprotocolextensions or fteprotocolextensions2 (?)
+								protocol = reader.ReadInt32();
+
+								if(protocol == PROTOCOL_FTE2)
+								{
+									reader.BaseStream.Position += 4; // Skip fteprotocolextensions2 (?)
+									protocol = reader.ReadInt32();
+								}
+
+								reader.SkipString(1024); // Skip mod folder...
+							}
+
 							if(protocol != PROTOCOL_NETQUAKE && protocol != PROTOCOL_FITZQUAKE && protocol != PROTOCOL_RMQ) return null;
 							if(protocol == PROTOCOL_RMQ) reader.BaseStream.Position += 4; // Skip RMQ protocolflags (int32)
 

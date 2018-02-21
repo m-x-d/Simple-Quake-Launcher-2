@@ -20,6 +20,10 @@ The older, WinXP-compartible iteration of this project can be found here: https:
 
 ==== CHANGELOG ====
 
+2.4:
+- Quake: improved .DEM reader compatibility (FTE/FTE2 demos support).
+- Quake, UI: renamed "Medium" skill to "Normal".
+
 2.3:
 - Desktop resolution can now be selected in the "Resolution" combo box.
 - Fixed, Quake 2: Official Mission Pack names were swapped.

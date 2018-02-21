@@ -75,7 +75,7 @@ namespace mxd.SQL2.Games.Quake
 			skills.AddRange(new[]
 			{
 				new SkillItem("Easy", "0"),
-				new SkillItem("Medium", "1", true),
+				new SkillItem("Normal", "1", true),
 				new SkillItem("Hard", "2"),
 				new SkillItem("Nightmare!", "3", false, true)
 			});
