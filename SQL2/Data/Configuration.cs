@@ -21,7 +21,8 @@ namespace mxd.SQL2.Data
 		public static string Demo = string.Empty;
 		public static string Skill = string.Empty;
 		public static string Class = string.Empty; // [Hexen 2]
-		public static int Game; 
+		public static int Game;
+        public static bool ignore_rc = false;
 		public static Dictionary<ItemType, string> ExtraArguments = new Dictionary<ItemType, string>(); // LaunchParameterType, custom arg
 
 		#endregion
@@ -80,6 +81,7 @@ namespace mxd.SQL2.Data
 					case "skill": Skill = value; break;
 					case "class": Class = value; break;
 					case "basegame": int.TryParse(value, out Game);	break;
+                    case "ignore_rc": ignore_rc = true; break;
 
 					default:
 						System.Windows.MessageBox.Show("Got unknown configuration parameter:\n'" + line + "'", App.ErrorMessageTitle);
@@ -100,6 +102,7 @@ namespace mxd.SQL2.Data
 			if(!string.IsNullOrEmpty(Skill) && Skill != SkillItem.Default.Value) sb.AppendLine("skill" + separator[0] + Skill);
 			if(!string.IsNullOrEmpty(Class) && Class != ClassItem.Default.Value) sb.AppendLine("class" + separator[0] + Class);
 			if(Game > 0) sb.AppendLine("basegame" + separator[0] + Game);
+            if (ignore_rc) sb.AppendLine("ignore_rc" + separator[0] + "true");
 			if(ExtraArguments.Count > 0)
 			{
 				var args = new List<string>();

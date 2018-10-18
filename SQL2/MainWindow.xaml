@@ -5,130 +5,134 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:controls="clr-namespace:mxd.SQL2.Controls"
 		mc:Ignorable="d"
-		Title="Simple Quake Launcher" Height="446" Width="302" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen" SnapsToDevicePixels="True" Loaded="MainWindow_Loaded" Activated="MainWindow_Activated" Deactivated="MainWindow_Deactivated" Closing="MainWindow_Closing" SizeToContent="Height">
-	<Window.Resources>
-		<DataTemplate x:Key="coloreditemtemplate">
-			<TextBlock x:Name="content" Text="{Binding Title}" Foreground="{Binding Foreground}"/>
-			<DataTemplate.Triggers>
-				<DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=ComboBox}, Path=IsEnabled}" Value="False">
-					<Setter TargetName="content" Property="Foreground" Value="{x:Static SystemColors.InactiveCaptionTextBrush}" />
-				</DataTrigger>
-			</DataTemplate.Triggers>
-		</DataTemplate>
-	</Window.Resources>
-	<Grid Margin="0">
-		<Grid.Background>
-			<SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}"/>
-		</Grid.Background>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="89"/>
-			<RowDefinition/>
-			<RowDefinition Height="87"/>
-			<RowDefinition Height="44"/>
-		</Grid.RowDefinitions>
-		<Label Grid.Row="0" x:Name="labelversion" Content="v2.01" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" HorizontalAlignment="Right" Width="46" Margin="0,-5,4,0" Height="26" VerticalAlignment="Top" FontWeight="Bold" HorizontalContentAlignment="Right"/>
-		<GroupBox Grid.Row="0" x:Name="groupenginesettings" Header=" Engine Settings: " Margin="6,6,6,2">
-			<Grid Margin="0,3,0,0">
-				<Grid.RowDefinitions>
-					<RowDefinition Name="rowengine" Height="24*"/>
-					<RowDefinition Name="rowresolution" Height="24*"/>
-				</Grid.RowDefinitions>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="78*"/>
-					<ColumnDefinition Width="193*"/>
-				</Grid.ColumnDefinitions>
-				<Label x:Name="labelengine" Content="Engine:" Margin="0" Grid.RowSpan="1" HorizontalAlignment="Right"/>
-				<Label x:Name="labelresolutions" Content="Resolution:" HorizontalAlignment="Right" Margin="0" Grid.Row="1"/>
-				<ComboBox x:Name="engines" Margin="5,2,0,0" IsReadOnly="True" Height="24" SelectionChanged="engines_SelectionChanged" Grid.Column="1" VerticalAlignment="Top">
-					<ComboBox.ItemTemplate>
-						<DataTemplate>
-							<StackPanel Height="20" Orientation="Horizontal">
-								<Image VerticalAlignment="Center" Margin="0,0,4,0" Width="16" Height="16" Source="{Binding Icon}" />
-								<TextBlock Text="{Binding Title}" />
-							</StackPanel>
-						</DataTemplate>
-					</ComboBox.ItemTemplate>
-				</ComboBox>
-				<ComboBox x:Name="resolutions" ItemTemplate="{StaticResource coloreditemtemplate}" Margin="5,2,0,2" IsReadOnly="True" Height="24" SelectionChanged="resolutions_SelectionChanged" Grid.Column="1" Grid.Row="1" VerticalAlignment="Top"/>
-			</Grid>
-		</GroupBox>
-		<GroupBox x:Name="groupgamesettings" Header=" Game Settings: " Margin="6,2" Grid.Row="1">
-			<Grid Margin="0,4,0,0">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="78*"/>
-					<ColumnDefinition Width="193*"/>
-				</Grid.ColumnDefinitions>
-				<Grid.RowDefinitions>
-					<RowDefinition Name="rowgame" Height="12*"/>
-					<RowDefinition Name="rowmod" Height="12*"/>
-					<RowDefinition Name="rowmap" Height="12*"/>
-					<RowDefinition Name="rowskill" Height="12*"/>
-					<RowDefinition Name="rowclass" Height="12*"/>
-					<RowDefinition Name="rowdemo" Height="12*"/>
-				</Grid.RowDefinitions>
-				<Label x:Name="labelgames" Content="Game:" Margin="0" HorizontalContentAlignment="Right" HorizontalAlignment="Right"/>
-				<Label x:Name="labelmods" Content="Mod:" HorizontalAlignment="Right" Margin="0" HorizontalContentAlignment="Right" Grid.Row="1"/>
-				<ComboBox x:Name="games" ItemTemplate="{StaticResource coloreditemtemplate}" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="games_SelectionChanged" Grid.Column="1" Height="22" VerticalAlignment="Top"/>
-				<ComboBox x:Name="mods" ItemTemplate="{StaticResource coloreditemtemplate}" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="mods_SelectionChanged" Grid.Row="1" Grid.Column="1" Height="22" VerticalAlignment="Top"/>
-				<Label x:Name="labelmaps" Content="Map:" HorizontalAlignment="Right" Margin="0" HorizontalContentAlignment="Right" Grid.Row="2"/>
-				<ComboBox x:Name="maps" ItemTemplate="{StaticResource coloreditemtemplate}" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="maps_SelectionChanged" Grid.Row="2" Grid.Column="1" Height="22" VerticalAlignment="Top"/>
-				<Label x:Name="labelskills" Content="Skill:" HorizontalAlignment="Right" Margin="0" HorizontalContentAlignment="Right" Grid.Row="3"/>
-				<ComboBox x:Name="skills" ItemTemplate="{StaticResource coloreditemtemplate}" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="skills_SelectionChanged" Grid.Row="3" Grid.Column="1" Height="22" VerticalAlignment="Top"/>
-				<Label x:Name="labelclasses" Content="Class:" HorizontalAlignment="Right" Margin="0" HorizontalContentAlignment="Right" Grid.Row="4"/>
-				<ComboBox x:Name="classes" ItemTemplate="{StaticResource coloreditemtemplate}" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="classes_SelectionChanged" Grid.Row="4" Grid.Column="1" Height="22" VerticalAlignment="Top"/>
-				<Label x:Name="labeldemos" Content="Demo:" HorizontalAlignment="Right" Margin="0" HorizontalContentAlignment="Right" Grid.Row="5"/>
-				<ComboBox x:Name="demos" ItemTemplate="{StaticResource coloreditemtemplate}" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="demos_SelectionChanged" Grid.Row="5" Grid.Column="1" Height="22" VerticalAlignment="Top"/>
-			</Grid>
-		</GroupBox>
-		<GroupBox x:Name="grouppreview" Header=" Command Line: " Margin="6,2" Grid.Row="2">
-			<controls:PreviewTextBox x:Name="cmdline" ContextMenu="{x:Null}" IsReadOnlyCaretVisible="True" Margin="0,4,0,0" IsInactiveSelectionHighlightEnabled="True" VerticalScrollBarVisibility="Auto">
-				<controls:PreviewTextBox.ToolTip>
-					<TextBlock>
+		Title="Simple Quake Launcher" Height="500" Width="302" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen" SnapsToDevicePixels="True" Loaded="MainWindow_Loaded" Activated="MainWindow_Activated" Deactivated="MainWindow_Deactivated" Closing="MainWindow_Closing" SizeToContent="Height">
+    <Window.Resources>
+        <DataTemplate x:Key="coloreditemtemplate">
+            <TextBlock x:Name="content" Text="{Binding Title}" Foreground="{Binding Foreground}"/>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=ComboBox}, Path=IsEnabled}" Value="False">
+                    <Setter TargetName="content" Property="Foreground" Value="{x:Static SystemColors.InactiveCaptionTextBrush}" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </Window.Resources>
+    <Grid Margin="0">
+        <Grid.Background>
+            <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}"/>
+        </Grid.Background>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="89"/>
+            <RowDefinition/>
+            <RowDefinition Height="58"/>
+            <RowDefinition Height="87"/>
+            <RowDefinition Height="44"/>
+        </Grid.RowDefinitions>
+        <Label Grid.Row="0" x:Name="labelversion" Content="v2.01" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" HorizontalAlignment="Right" Width="46" Margin="0,-5,4,0" Height="26" VerticalAlignment="Top" FontWeight="Bold" HorizontalContentAlignment="Right"/>
+        <GroupBox Grid.Row="0" x:Name="groupenginesettings" Header=" Engine Settings: " Margin="6,6,6,2">
+            <Grid Margin="0,3,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Name="rowengine" Height="24*"/>
+                    <RowDefinition Name="rowresolution" Height="24*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="78*"/>
+                    <ColumnDefinition Width="193*"/>
+                </Grid.ColumnDefinitions>
+                <Label x:Name="labelengine" Content="Engine:" Margin="0" Grid.RowSpan="1" HorizontalAlignment="Right"/>
+                <Label x:Name="labelresolutions" Content="Resolution:" HorizontalAlignment="Right" Margin="0" Grid.Row="1"/>
+                <ComboBox x:Name="engines" Margin="5,2,0,0" IsReadOnly="True" Height="24" SelectionChanged="engines_SelectionChanged" Grid.Column="1" VerticalAlignment="Top">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Height="20" Orientation="Horizontal">
+                                <Image VerticalAlignment="Center" Margin="0,0,4,0" Width="16" Height="16" Source="{Binding Icon}" />
+                                <TextBlock Text="{Binding Title}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <ComboBox x:Name="resolutions" Margin="5,2,0,2" IsReadOnly="True" Height="24" SelectionChanged="resolutions_SelectionChanged" Grid.Column="1" Grid.Row="1" VerticalAlignment="Top"/>
+            </Grid>
+        </GroupBox>
+        <GroupBox x:Name="groupgamesettings" Header=" Game Settings: " Margin="6,2,6,0" Grid.Row="1">
+            <Grid Margin="0,4,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="78*"/>
+                    <ColumnDefinition Width="193*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Name="rowgame" Height="12*"/>
+                    <RowDefinition Name="rowmod" Height="12*"/>
+                    <RowDefinition Name="rowmap" Height="12*"/>
+                    <RowDefinition Name="rowskill" Height="12*"/>
+                    <RowDefinition Name="rowclass" Height="12*"/>
+                    <RowDefinition Name="rowdemo" Height="12*"/>
+                </Grid.RowDefinitions>
+                <Label x:Name="labelgames" Content="Game:" Margin="0" HorizontalContentAlignment="Right" HorizontalAlignment="Right"/>
+                <Label x:Name="labelmods" Content="Mod:" HorizontalAlignment="Right" Margin="0" HorizontalContentAlignment="Right" Grid.Row="1"/>
+                <ComboBox x:Name="games" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="games_SelectionChanged" Grid.Column="1" Height="22" VerticalAlignment="Top"/>
+                <ComboBox x:Name="mods" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="mods_SelectionChanged" Grid.Row="1" Grid.Column="1" Height="22" VerticalAlignment="Top"/>
+                <Label x:Name="labelmaps" Content="Map:" HorizontalAlignment="Right" Margin="0" HorizontalContentAlignment="Right" Grid.Row="2"/>
+                <ComboBox x:Name="maps" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="maps_SelectionChanged" Grid.Row="2" Grid.Column="1" Height="22" VerticalAlignment="Top"/>
+                <Label x:Name="labelskills" Content="Skill:" HorizontalAlignment="Right" Margin="0" HorizontalContentAlignment="Right" Grid.Row="3"/>
+                <ComboBox x:Name="skills" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="skills_SelectionChanged" Grid.Row="3" Grid.Column="1" Height="22" VerticalAlignment="Top"/>
+                <Label x:Name="labelclasses" Content="Class:" HorizontalAlignment="Right" Margin="0" HorizontalContentAlignment="Right" Grid.Row="4"/>
+                <ComboBox x:Name="classes" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="classes_SelectionChanged" Grid.Row="4" Grid.Column="1" Height="22" VerticalAlignment="Top"/>
+                <Label x:Name="labeldemos" Content="Demo:" HorizontalAlignment="Right" Margin="0" HorizontalContentAlignment="Right" Grid.Row="5"/>
+                <ComboBox x:Name="demos" Margin="5,2,0,2" IsReadOnly="True" SelectionChanged="demos_SelectionChanged" Grid.Row="5" Grid.Column="1" Height="22" VerticalAlignment="Top"/>
+            </Grid>
+        </GroupBox>
+        <GroupBox x:Name="grouppreview" Header=" Command Line: " Margin="6,2" Grid.Row="3">
+            <controls:PreviewTextBox x:Name="cmdline" ContextMenu="{x:Null}" IsReadOnlyCaretVisible="True" Margin="0,4,0,0" IsInactiveSelectionHighlightEnabled="True" VerticalScrollBarVisibility="Auto">
+                <controls:PreviewTextBox.ToolTip>
+                    <TextBlock>
 						<Span>Some </Span>
 						<Span Foreground="{x:Static SystemColors.HotTrackBrush}" Background="{x:Static SystemColors.GradientInactiveCaptionBrush}">text areas</Span>
 						<Span> are editable.<LineBreak/>Middle-click an </Span>
 						<Span Foreground="{x:Static SystemColors.HotTrackBrush}" Background="{x:Static SystemColors.GradientInactiveCaptionBrush}">editable text area</Span>
 						<Span> to clear it</Span>
-					</TextBlock>
-				</controls:PreviewTextBox.ToolTip>
-			</controls:PreviewTextBox>
-		</GroupBox>
-		<Button x:Name="copyargs" Margin="0,2,32,0" VerticalAlignment="Top" Height="18" HorizontalAlignment="Right" Width="18" Click="copyargs_Click" Grid.Row="2">
-			<Image Source="Resources/Copy.png"/>
-			<Button.ToolTip>Copy arguments to clipboard</Button.ToolTip>
-		</Button>
-		<Button x:Name="clearcustomargs" Margin="0,2,12,0" VerticalAlignment="Top" Height="18" HorizontalAlignment="Right" Width="18" Click="clearcustomargs_Click" Grid.Row="2">
-			<Image Source="Resources/Delete.png"/>
-			<Button.ToolTip>Clear custom arguments</Button.ToolTip>
-		</Button>
-		<Grid Margin="0" Grid.Row="3">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="26*"/>
-				<ColumnDefinition Width="110*"/>
-			</Grid.ColumnDefinitions>
-			<Button x:Name="launch" Content="Launch!" Margin="1,6,10,0" FontSize="16" Click="launch_Click" FontWeight="Bold" Grid.Column="1" Height="30" VerticalAlignment="Top" IsDefault="True"/>
-			<Button x:Name="createshortcut" Click="createshortcut_OnClick" Margin="10,6,1,0" VerticalAlignment="Top" Height="30">
-				<Grid>
-					<Image Width="22" Height="22" HorizontalAlignment="Left" x:Name="engineicon" Margin="-8,0,0,0"></Image>
-					<Image Width="10" Height="10" VerticalAlignment="Bottom" HorizontalAlignment="Left" Source="Resources/Shortcut.png" Margin="-12,0,0,-2"></Image>
-					<TextBlock FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,-10,0">▼</TextBlock>
-				</Grid>
-				<Button.ToolTip>Create shortcut using current options</Button.ToolTip>
-				<Button.ContextMenu>
-					<ContextMenu Placement="Bottom">
-						<MenuItem Name="createdesktopshortcut" Header="Create shortcut on the Desktop" Click="createdesktopshortcut_OnClick">
-							<MenuItem.Icon>
-								<Image Width="16" Height="16" Source="Resources\Desktop.png"/>
-							</MenuItem.Icon>
-						</MenuItem>
-						<MenuItem Name="createfoldershortcut" Header="Create shortcut in the Game folder" Click="createfoldershortcut_OnClick">
-							<MenuItem.Icon>
-								<Image Width="16" Height="16" Source="Resources\Folder.png"/>
-							</MenuItem.Icon>
-						</MenuItem>
-					</ContextMenu>
-				</Button.ContextMenu>
-			</Button>
-		</Grid>
-	</Grid>
+                    </TextBlock>
+                </controls:PreviewTextBox.ToolTip>
+            </controls:PreviewTextBox>
+        </GroupBox>
+        <Button x:Name="copyargs" Margin="0,2,32,0" VerticalAlignment="Top" Height="18" HorizontalAlignment="Right" Width="18" Click="copyargs_Click" Grid.Row="3">
+            <Image Source="Resources/Copy.png"/>
+            <Button.ToolTip>Copy arguments to clipboard</Button.ToolTip>
+        </Button>
+        <Button x:Name="clearcustomargs" Margin="0,2,12,0" VerticalAlignment="Top" Height="18" HorizontalAlignment="Right" Width="18" Click="clearcustomargs_Click" Grid.Row="3">
+            <Image Source="Resources/Delete.png"/>
+            <Button.ToolTip>Clear custom arguments</Button.ToolTip>
+        </Button>
+        <Grid Margin="0" Grid.Row="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="26*"/>
+                <ColumnDefinition Width="110*"/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="launch" Content="Launch!" Margin="1,6,10,0" FontSize="16" Click="launch_Click" FontWeight="Bold" Grid.Column="1" Height="30" VerticalAlignment="Top" IsDefault="True"/>
+            <Button x:Name="createshortcut" Click="createshortcut_OnClick" Margin="10,6,1,0" VerticalAlignment="Top" Height="30">
+                <Grid>
+                    <Image Width="22" Height="22" HorizontalAlignment="Left" x:Name="engineicon" Margin="-8,0,0,0"></Image>
+                    <Image Width="10" Height="10" VerticalAlignment="Bottom" HorizontalAlignment="Left" Source="Resources/Shortcut.png" Margin="-12,0,0,-2"></Image>
+                    <TextBlock FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,-10,0">▼</TextBlock>
+                </Grid>
+                <Button.ToolTip>Create shortcut using current options</Button.ToolTip>
+                <Button.ContextMenu>
+                    <ContextMenu Placement="Bottom">
+                        <MenuItem Name="createdesktopshortcut" Header="Create shortcut on the Desktop" Click="createdesktopshortcut_OnClick">
+                            <MenuItem.Icon>
+                                <Image Width="16" Height="16" Source="Resources\Desktop.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Name="createfoldershortcut" Header="Create shortcut in the Game folder" Click="createfoldershortcut_OnClick">
+                            <MenuItem.Icon>
+                                <Image Width="16" Height="16" Source="Resources\Folder.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </ContextMenu>
+                </Button.ContextMenu>
+            </Button>
+        </Grid>
+        <GroupBox Header="Special actions" Margin="6,1,6,5" Grid.Row="2">
+            <CheckBox x:Name="ignore_quake_rc" Content="Ignore quake.rc" Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" IsEnabled="False" Checked="IgnoreQuakeRC_Checked" Unchecked="IgnoreQuakeRC_Unchecked"/>
+        </GroupBox>
+    </Grid>
 </Window>
