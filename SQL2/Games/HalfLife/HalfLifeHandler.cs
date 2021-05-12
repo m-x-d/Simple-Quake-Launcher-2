@@ -161,8 +161,8 @@ namespace mxd.SQL2.Games.HalfLife
 
 			foreach(string folder in Directory.GetDirectories(gamepath))
 			{
-				// Skip folder if it has no maps
-				if(!foldercontainsmaps(folder) && !pakscontainmaps(folder)) continue;
+				// Skip folder if it has no maps or client.dll
+				if(!foldercontainsmaps(folder) && !pakscontainmaps(folder) && !File.Exists(Path.Combine(folder, "cl_dlls\\client.dll"))) continue;
 
 				string name = folder.Substring(gamepath.Length + 1);
 				bool isbuiltin = (string.Compare(folder, defaultmodpath, StringComparison.OrdinalIgnoreCase) == 0);

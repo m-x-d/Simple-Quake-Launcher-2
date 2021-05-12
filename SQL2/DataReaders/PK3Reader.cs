@@ -159,5 +159,42 @@ namespace mxd.SQL2.DataReaders
 		}
 
 		#endregion
+
+		#region ================= Files
+
+		public static bool ContainsFile(string modpath, string filename)
+		{
+			string[] zipfiles = Directory.GetFiles(modpath, "*.pk3");
+
+			foreach (string file in zipfiles)
+			{
+				if (!file.EndsWith(".pk3", StringComparison.OrdinalIgnoreCase)) continue;
+				using (FileStream stream = File.OpenRead(file))
+				{
+					using (BinaryReader reader = new BinaryReader(stream, Encoding.ASCII))
+					{
+						// Traverse file entries
+						while (reader.ReadStringExactLength(4) == "PK\x03\x04")
+						{
+							reader.BaseStream.Position += 14;
+							int compressedsize = reader.ReadInt32();
+							reader.BaseStream.Position += 4;
+							short filenamelength = reader.ReadInt16();
+							short extralength = reader.ReadInt16();
+							string entry = reader.ReadStringExactLength(filenamelength);
+
+							if (string.CompareOrdinal(entry, filename) == 0)
+								return true;
+
+							reader.BaseStream.Position += extralength + compressedsize;
+						}
+					}
+				}
+			}
+
+			return false;
+		}
+
+		#endregion
 	}
 }

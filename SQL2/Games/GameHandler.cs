@@ -33,7 +33,8 @@ namespace mxd.SQL2.Games
 		protected Dictionary<bool, string> fullscreenarg; // true: arg to run the game in fullscreen, false: arg to run the game windowed
 
 		private HashSet<string> mapnames;
-		private HashSet<string> defaultmapnames; // Maps from defaultmodpath. Needed to properly check demos MapPath data... 
+		private HashSet<string> defaultmapnames; // Map names from defaultmodpath. Needed to properly check demos MapPath data... 
+		private Dictionary<string, MapItem> defaultmaplist; // Maps from defaultmodpath. Needed to populate "maps" dropdown for mods without maps...
 		private List<string> skillnames;
 		private List<string> classnames; // [Hexen 2 only]
 
@@ -82,6 +83,10 @@ namespace mxd.SQL2.Games
 		protected delegate bool PakContainsMapsDelegate(string modpath);
 		protected delegate bool PK3ContainsMapsDelegate(string modpath);
 
+		// File checking
+		protected delegate bool PakContainsFileDelegate(string modpath, string filename);
+		protected delegate bool PK3ContainsFileDelegate(string modpath, string filename);
+
 		// Demo info retrieval
 		protected delegate DemoItem GetDemoInfoDelegate(string demoname, BinaryReader reader, ResourceType restype);
 
@@ -102,6 +107,10 @@ namespace mxd.SQL2.Games
 		protected FolderContainsMapsDelegate foldercontainsmaps;
 		protected PakContainsMapsDelegate pakscontainmaps;
 		protected PK3ContainsMapsDelegate pk3scontainmaps;
+
+		// File checking instances
+		protected PakContainsFileDelegate pakscontainfile;
+		protected PK3ContainsFileDelegate pk3scontainfile;
 
 		// Demo info retrieval instance
 		protected GetDemoInfoDelegate getdemoinfo;
@@ -141,6 +150,17 @@ namespace mxd.SQL2.Games
 
 			if(classes.Count > 1) classes.Insert(0, ClassItem.Random);
 			if(classes.Count > 0) classes.Insert(0, ClassItem.Default);
+
+			// Store base game maps...
+			defaultmaplist = new Dictionary<string, MapItem>(StringComparer.OrdinalIgnoreCase);
+			var path = Path.Combine(gamepath, defaultmodpath);
+
+			if (Directory.Exists(path))
+			{
+				getfoldermaps?.Invoke(path, defaultmaplist, getmapinfo);
+				getpakmaps?.Invoke(path, defaultmaplist, getmapinfo);
+				getpk3maps?.Invoke(path, defaultmaplist, getmapinfo);
+			}
 		}
 
 		#endregion
@@ -148,15 +168,14 @@ namespace mxd.SQL2.Games
 		#region ================= Data gathering
 
 		// Quakespasm can play demos made for both ID1 maps and currently selected official MP from any folder...
-		public void UpdateDefaultMapNames(List<string> modpaths)
+		public void UpdateDefaultMapNames(string modpath)
 		{
 			// Store maps from default mod...
 			var maplist = new Dictionary<string, MapItem>(StringComparer.OrdinalIgnoreCase);
 
 			// Get maps from all supported sources
-			foreach(string modpath in modpaths)
+			if(!string.IsNullOrEmpty(modpath) && Directory.Exists(modpath))
 			{
-				if(!Directory.Exists(modpath)) continue;
 				getfoldermaps?.Invoke(modpath, maplist, null);
 				getpakmaps?.Invoke(modpath, maplist, null);
 				getpk3maps?.Invoke(modpath, maplist, null);
@@ -164,6 +183,9 @@ namespace mxd.SQL2.Games
 
 			// Store map names...
 			defaultmapnames = new HashSet<string>(maplist.Keys, StringComparer.OrdinalIgnoreCase);
+
+			// Add map names from base game...
+			defaultmapnames.UnionWith(defaultmaplist.Keys);
 		}
 
 		// Because some engines have hardcoded resolution lists...
@@ -216,7 +238,7 @@ namespace mxd.SQL2.Games
 		{
 			modname = modpath.Substring(gamepath.Length + 1);
 			if(!Directory.Exists(modpath)) return new List<MapItem>();
-			Dictionary<string, MapItem> maplist = new Dictionary<string, MapItem>(StringComparer.OrdinalIgnoreCase);
+			var maplist = new Dictionary<string, MapItem>(StringComparer.OrdinalIgnoreCase);
 
 			// Get maps from all supported sources
 			getfoldermaps?.Invoke(modpath, maplist, getmapinfo);
@@ -227,8 +249,12 @@ namespace mxd.SQL2.Games
 			mapnames = new HashSet<string>(maplist.Keys, StringComparer.OrdinalIgnoreCase);
 			mapnames.UnionWith(defaultmapnames); // Add default maps...
 
+			// When mod has no maps, use maps from base game...
+			if (maplist.Count == 0)
+				maplist = defaultmaplist;
+
 			// Sort and return the List
-			List<MapItem> mapitems = new List<MapItem>(maplist.Values.Count);
+			var mapitems = new List<MapItem>(maplist.Values.Count);
 			foreach(MapItem mi in maplist.Values) mapitems.Add(mi);
 			mapitems.Sort((s1, s2) =>
 			{

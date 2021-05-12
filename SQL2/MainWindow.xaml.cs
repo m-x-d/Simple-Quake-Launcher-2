@@ -192,12 +192,8 @@ namespace mxd.SQL2
 		// Quakespasm can play demos made for both ID1 maps and currently selected official MP from any folder...
 		private void UpdateDefaultMapNames()
 		{
-			List<string> defaultmaplocations = new List<string> { GameHandler.Current.DefaultModPath };
-
 			var game = (games.IsVisible && games.IsEnabled) ? (GameItem)games.SelectedItem : null;
-			if(game != null && !game.IsDefault) defaultmaplocations.Add(game.ModFolder);
-
-			GameHandler.Current.UpdateDefaultMapNames(defaultmaplocations);
+			GameHandler.Current.UpdateDefaultMapNames((game != null && !game.IsDefault) ? game.ModFolder : string.Empty);
 		}
 
 		private void UpdateMapsList()

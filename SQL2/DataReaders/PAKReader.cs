@@ -180,5 +180,44 @@ namespace mxd.SQL2.DataReaders
 		}
 
 		#endregion
+
+		#region ================= Files
+
+		public static bool ContainsFile(string modpath, string filename)
+		{
+			string[] pakfiles = Directory.GetFiles(modpath, "*.pak");
+
+			foreach (string file in pakfiles)
+			{
+				if (!file.EndsWith(".pak", StringComparison.OrdinalIgnoreCase)) continue;
+				using (FileStream stream = File.OpenRead(file))
+				{
+					using (BinaryReader reader = new BinaryReader(stream, Encoding.ASCII))
+					{
+						// Read header
+						string id = reader.ReadStringExactLength(4);
+						if (id != "PACK") continue;
+
+						int ftoffset = reader.ReadInt32();
+						int ftsize = reader.ReadInt32() / 64;
+
+						// Read file table
+						reader.BaseStream.Position = ftoffset;
+						for (int i = 0; i < ftsize; i++)
+						{
+							string entry = reader.ReadStringExactLength(56).Trim(); // Read entry name
+							reader.BaseStream.Position += 8; // Skip unrelated stuff
+
+							if (string.CompareOrdinal(entry, filename) == 0)
+								return true;
+						}
+					}
+				}
+			}
+
+			return false;
+		}
+
+		#endregion
 	}
 }

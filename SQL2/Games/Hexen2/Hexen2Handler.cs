@@ -66,6 +66,10 @@ namespace mxd.SQL2.Games.Hexen2
 
 			getdemoinfo = Hexen2DemoReader.GetDemoInfo;
 
+			// Setup file checking delegates
+			pakscontainfile = PAKReader.ContainsFile;
+			pk3scontainfile = PK3Reader.ContainsFile;
+
 			// Setup fullscreen args...
 			fullscreenarg[true] = string.Empty;
 			fullscreenarg[false] = "-window ";
@@ -127,6 +131,13 @@ namespace mxd.SQL2.Games.Hexen2
 				if(basegames.ContainsKey(name))
 				{
 					result.Add(new ModItem(name, folder, true));
+					continue;
+				}
+
+				// Count folder as a mod when it contains "progs.dat"...
+				if(File.Exists(Path.Combine(folder, "progs.dat")) || pakscontainfile(folder, "progs.dat") || pk3scontainfile(folder, "progs.dat"))
+				{
+					result.Add(new ModItem(name, folder));
 					continue;
 				}
 

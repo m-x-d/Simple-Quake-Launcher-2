@@ -162,8 +162,8 @@ namespace mxd.SQL2.Games.Quake2
 
 			foreach(string folder in Directory.GetDirectories(gamepath))
 			{
-				// Skip folder if it has no maps
-				if(!foldercontainsmaps(folder) && !pakscontainmaps(folder) && !pk3scontainmaps(folder))
+				// Skip folder if it has no maps or a variant of "gamex86.dll"
+				if(!foldercontainsmaps(folder) && !pakscontainmaps(folder) && !pk3scontainmaps(folder) && !ContainsGameDll(folder))
 					continue;
 
 				string name = folder.Substring(gamepath.Length + 1);
@@ -184,6 +184,24 @@ namespace mxd.SQL2.Games.Quake2
 			});
 
 			return result;
+		}
+
+		// Check for a variant of "gamex86.dll". Can be named differently depending on source port...
+		// Vanilla, UQE Quake2: gamex86.dll
+		// KMQuake2: kmq2gamex86.dll
+		// Yamagi Quake2: game.dll
+		// Quake 2 Evolved: q2e_gamex86.dll
+		// Quake 2 XP: gamex86xp.dll
+		private bool ContainsGameDll(string folder)
+		{
+			//TODO? Ideally, we should check for game.dll specific to selected game engine, but that would require too much work, including updating mod list when game engine selection changes. 
+			//TODO? So, for now just look for anything resembling game.dll...
+			var dlls = Directory.GetFiles(folder, "*.dll");
+			foreach (var dll in dlls)
+				if (Path.GetFileName(dll).Contains("game"))
+					return true;
+
+			return false;
 		}
 
 		#endregion
