@@ -20,6 +20,12 @@ The older, WinXP-compartible iteration of this project can be found here: https:
 
 ==== CHANGELOG ====
 
+2.5:
+Added handling for mods without map files. More specifically:
+- Quake, Hexen 2: count folder as a mod if it (or PAK/PK3 files within it) contains progs.dat.
+- Quake2: count folder as a mod if it contains a variant of gamex86.dll.
+- Half-Life: count folder as a mod if it contains "cl_dlls\client.dll".
+
 2.4:
 - Quake: improved .DEM reader compatibility (FTE/FTE2 demos support).
 - Quake, UI: renamed "Medium" skill to "Normal".
