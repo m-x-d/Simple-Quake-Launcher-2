@@ -187,7 +187,10 @@ namespace mxd.SQL2
 
 			// Select the Default item...
 			if(mods.SelectedIndex == -1) mods.SelectedIndex = 0;
-		}
+
+            /// Find and rename quake.rc_ignore back to quake.rc in case there are some leftovers
+            SpecialActions.EnableQuakeRC();
+        }
 
 		// Quakespasm can play demos made for both ID1 maps and currently selected official MP from any folder...
 		private void UpdateDefaultMapNames()
@@ -351,9 +354,30 @@ namespace mxd.SQL2
 			bool havedemos = (demos.Items.Count > 0);
 			demos.IsEnabled = havedemos;
 			labeldemos.IsEnabled = havedemos;
-		}
 
-		private ModItem GetCurrentMod(ModItem mi)
+            UpdateSpecialActionsInterface();
+        }
+
+        // Enable/disable options in "Special Actions" box, based on currently selected game
+        private void UpdateSpecialActionsInterface()
+        {
+            switch (GameHandler.Current.GameTitle)
+            {
+                case "Quake":
+                    ignore_quake_rc.IsEnabled = true;
+                    break;
+                default:
+                    ignore_quake_rc.IsEnabled = false;
+                    break;
+            }
+
+            if (Configuration.ignore_rc)
+            {
+                ignore_quake_rc.IsChecked = true;
+            }
+        }
+
+        private ModItem GetCurrentMod(ModItem mi)
 		{
 			var gi = (GameItem)games.SelectedItem;
 
@@ -502,6 +526,12 @@ namespace mxd.SQL2
 				return;
 			}
 
+            /// Ignire quake.rc file when launching
+            if (ignore_quake_rc.IsChecked.HasValue && ignore_quake_rc.IsChecked.Value)
+            {
+                SpecialActions.DisableQuakeRC();
+            }
+
 			// Don't mess with window position when launching in windowed mode
 			var res = (ResolutionItem)lp[ItemType.RESOLUTION];
 			windowx = (res.IsDefault ? (int)this.Left : int.MaxValue);
@@ -586,7 +616,10 @@ namespace mxd.SQL2
 			UpdateDemosList();
 			UpdateInterface();
 			UpdateCommandLinePreview();
-		}
+
+            /// Find and rename quake.rc_ignore back to quake.rc in case there are some leftovers
+            SpecialActions.EnableQuakeRC();
+        }
 
 		private void maps_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
@@ -699,6 +732,18 @@ namespace mxd.SQL2
 			focusstate = FocusState.UNFOCUSED;
 		}
 
-		#endregion
-	}
+        private void IgnoreQuakeRC_Checked(object sender, RoutedEventArgs e)
+        {
+            Configuration.ignore_rc = true;
+            Configuration.Save();
+        }
+
+        private void IgnoreQuakeRC_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Configuration.ignore_rc = false;
+            Configuration.Save();
+        }
+
+        #endregion
+    }
 }

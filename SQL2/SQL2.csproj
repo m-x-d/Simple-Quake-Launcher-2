@@ -72,6 +72,7 @@
     <Compile Include="Games\Hexen2\Hexen2DemoReader.cs" />
     <Compile Include="Games\Hexen2\Hexen2Handler.cs" />
     <Compile Include="Games\Quake2\Quake2Handler.cs" />
+    <Compile Include="Games\SpecialActions.cs" />
     <Compile Include="Items\ClassItem.cs" />
     <Compile Include="Items\ItemType.cs" />
     <Compile Include="Items\SkillItem.cs" />
