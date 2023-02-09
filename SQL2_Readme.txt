@@ -20,6 +20,9 @@ The older, WinXP-compartible iteration of this project can be found here: https:
 
 ==== CHANGELOG ====
 
+2.6:
+- Fixed a crash when trying to read non-ASCII chars from worldspawn entity of a .bsp inside a .pk3 archive.
+
 2.5:
 Added handling for mods without map files. More specifically:
 - Quake, Hexen 2: count folder as a mod if it (or PAK/PK3 files within it) contains progs.dat.

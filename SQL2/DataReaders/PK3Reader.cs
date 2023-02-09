@@ -42,7 +42,7 @@ namespace mxd.SQL2.DataReaders
 							using(var stream = e.Open())
 							{
 								var wrapper = new DeflateStreamWrapper((DeflateStream)stream, e.Length);
-								using(var reader = new BinaryReader(wrapper))
+								using(var reader = new BinaryReader(wrapper, Encoding.ASCII))
 									mapitem = getmapinfo(mapname, reader, restype);
 							}
 						}
