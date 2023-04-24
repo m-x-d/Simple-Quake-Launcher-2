@@ -216,7 +216,7 @@ namespace mxd.SQL2.Games
 			demos.Sort((s1, s2) =>
 			{
 				if(s1.ResourceType != s2.ResourceType) return (int)s1.ResourceType > (int)s2.ResourceType ? 1 : -1; // Sort by ResourceType
-				return string.Compare(s1.Value, s2.Value, StringComparison.OrdinalIgnoreCase);
+				return s1.Value.CompareNatural(s2.Value);
 			});
 			return demos;
 		}
@@ -259,7 +259,7 @@ namespace mxd.SQL2.Games
 			mapitems.Sort((s1, s2) =>
 			{
 				if(s1.ResourceType != s2.ResourceType) return (int)s1.ResourceType > (int)s2.ResourceType ? 1 : -1; // Sort by ResourceType
-				return string.Compare(s1.Value, s2.Value, StringComparison.OrdinalIgnoreCase);
+				return s1.Value.CompareNatural(s2.Value);
 			});
 			return mapitems;
 		} 

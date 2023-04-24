@@ -20,6 +20,9 @@ The older, WinXP-compartible iteration of this project can be found here: https:
 
 ==== CHANGELOG ====
 
+2.7:
+- Implemented natural string sorting for map and demo filenames (now sorted like this: "e1m1, e1m2, e1m3, e1m10, e1m20" instead of this: "e1m1, e1m10, e1m2, e1m20, e1m3").
+
 2.6:
 - Fixed a crash when trying to read non-ASCII chars from worldspawn entity of a .bsp inside a .pk3 archive.
 
